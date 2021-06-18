@@ -1,7 +1,7 @@
 # Class definition
 class GoodDog
   
-  # initialize a constant for a conversion value that never changed
+  # initialize a constant for a conversion value that never changes
   DOG_YEARS = 7
 
   # Initialize class variable (available throughout class definition)
@@ -10,16 +10,17 @@ class GoodDog
   # creates 6 getter/setter (accessor) methods and 3 instance variables
   attr_accessor :name, :height, :weight, :age
   
-  # Constructor method, triggered when new GoodDob object is created (.new)
+  # Constructor method, triggered when new GoodDog object is created (.new)
   def initialize(n, h, w, a)
     # defines instance variables upon creation of new object
-    # ties specific and individual data to created object
+    # ties specific and individual data to created object (state)
     @name = n
     @height = h
     @weight = w
 
     # increment number of dogs each time new GoodDog object is initialized
     @@number_of_dogs += 1
+    # class variables accessible throughout class definition
 
     # use constant to calculate age in dog years when object is initialized
     self.age = a * DOG_YEARS
