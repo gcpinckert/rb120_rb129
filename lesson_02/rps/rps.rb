@@ -2,6 +2,7 @@ require 'pry'
 
 class Move
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  @@move_history = Hash.new([])
 
   attr_reader :beats, :value
 
@@ -12,6 +13,22 @@ class Move
 
   def to_s
     @value
+  end
+
+  def self.move_history
+    @@move_history
+  end
+
+  def self.display_history
+    player1, player2 = @@move_history.keys
+
+    puts "MOVE HISTORY".center(60, '-')
+    puts "Round".ljust(10) + player1.center(25) + player2.center(25)
+
+    (0...@@move_history[player1].size).each do |i|
+      puts "(#{i + 1})".ljust(10) + "#{@@move_history[player1][i]}".center(25) +
+           "#{@@move_history[player2][i]}".center(25)
+    end
   end
 
   def beats?(other_move)
@@ -74,6 +91,10 @@ class Player
     @move = nil
     @score = 0
   end
+
+  def save_move
+    Move.move_history[name] += [move.to_s]
+  end
 end
 
 class Human < Player
@@ -98,6 +119,7 @@ class Human < Player
     end
 
     self.move = Move.return_subclass_instance(choice)
+    save_move
   end
 end
 
@@ -108,6 +130,7 @@ class Computer < Player
 
   def chose
     self.move = Move.return_subclass_instance(Move::VALUES.sample)
+    save_move
   end
 end
 
@@ -186,6 +209,7 @@ class RPSGame
         play_single_match
         break if game_won?
       end
+      Move.display_history
       break unless play_again?
     end
     display_goodbye_message
