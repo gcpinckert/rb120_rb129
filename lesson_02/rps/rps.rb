@@ -1,3 +1,5 @@
+require 'pry'
+
 class Move
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
 
@@ -6,10 +8,6 @@ class Move
   def initialize(value)
     @value = value
     @beats = []
-  end
-
-  def move
-    @value
   end
 
   def to_s
@@ -22,6 +20,14 @@ class Move
 
   def tie?(other_move)
     @value == other_move.to_s
+  end
+
+  def self.return_subclass_instance(choice)
+    Move::VALUES.each_with_index do |value, index|
+      if choice == value
+        return const_get(value.capitalize).new
+      end
+    end
   end
 end
 
@@ -68,16 +74,6 @@ class Player
     @move = nil
     @score = 0
   end
-
-  def assign_correct_move(choice)
-    case choice
-    when 'rock' then self.move = Rock.new
-    when 'paper' then self.move = Paper.new
-    when 'scissors' then self.move = Scissors.new
-    when 'lizard' then self.move = Lizard.new
-    when 'spock' then self.move = Spock.new
-    end
-  end
 end
 
 class Human < Player
@@ -101,7 +97,7 @@ class Human < Player
       puts "Invalid choice."
     end
 
-    self.move = assign_correct_move(choice)
+    self.move = Move.return_subclass_instance(choice)
   end
 end
 
@@ -111,7 +107,7 @@ class Computer < Player
   end
 
   def chose
-    self.move = assign_correct_move(Move::VALUES.sample)
+    self.move = Move.return_subclass_instance(Move::VALUES.sample)
   end
 end
 
