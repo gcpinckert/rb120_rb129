@@ -88,6 +88,10 @@ class Move
     @@move_history
   end
 
+  def self.reset_move_history
+    @@move_history = Hash.new([])
+  end
+
   def self.history
     player1, player2 = @@move_history.keys
     table_headings = "Round".center(INSIDE_WIDTH / 3) +
@@ -340,6 +344,7 @@ class RPSGame
       2.times{move_down_1}
       break unless play_again?
       reset_round
+      Move.reset_move_history
     end
     2.times{move_down_1}
     print_message(goodbye_message)
