@@ -84,6 +84,18 @@ class Move
     @value
   end
 
+  def beats?(other_move)
+    beats.include?(other_move.value)
+  end
+
+  def self.return_subclass_instance(choice)
+    Move::VALUES.each_with_index do |value, index|
+      if choice == value
+        return const_get(value.capitalize).new
+      end
+    end
+  end
+
   def self.move_history
     @@move_history
   end
@@ -110,22 +122,6 @@ class Move
     end
 
     history
-  end
-
-  def beats?(other_move)
-    beats.include?(other_move.value)
-  end
-
-  def tie?(other_move)
-    @value == other_move.to_s
-  end
-
-  def self.return_subclass_instance(choice)
-    Move::VALUES.each_with_index do |value, index|
-      if choice == value
-        return const_get(value.capitalize).new
-      end
-    end
   end
 end
 
@@ -173,6 +169,8 @@ class Player
     @score = 0
   end
 
+  private
+
   def save_move
     Move.move_history[name] += [move.to_s]
   end
@@ -195,7 +193,7 @@ class Human < Player
     self.name = n
   end
 
-  def chose
+  def choose
     choice = nil
     loop do
       print_message_input ["Please make a choice: " \
@@ -216,7 +214,7 @@ class Computer < Player
     self.name = ["Mother", "Skynet", "Deep Thought", "Hal", "C-3PO"].sample
   end
 
-  def chose
+  def choose
     self.move = Move.return_subclass_instance(Move::VALUES.sample)
     save_move
   end
@@ -227,13 +225,41 @@ class RPSGame
 
   MAX_SCORE = 10
 
-  attr_accessor :human, :computer
-  attr_reader :messages
-
   def initialize
-    clear_screen
     @human = Human.new
     @computer = Computer.new
+  end
+
+  def play
+    set_up_game
+    loop do
+      loop do
+        play_single_match
+        break if game_won? || !(play_again?)
+        reset_round
+      end
+      show_move_history
+      break unless play_again?
+      reset_tournament
+    end
+    end_game
+  end
+
+  private
+
+  attr_accessor :human, :computer
+
+  def set_up_game
+    sets_background
+    expand_window if window_too_small?
+    print_banner(welcome_message)
+    human.set_name
+    computer.set_name
+  end
+
+  def sets_background
+    clear_screen
+    print_border
   end
 
   def expand_window
@@ -241,46 +267,85 @@ class RPSGame
     loop do
       break if IO.console.winsize[0] >=50
     end
-    clear_screen
     @@rows, @@columns = IO.console.winsize
-    print_border
+    sets_background
   end
 
+  def play_single_match
+    reset_round
+    human.choose
+    computer.choose
+    update_scores!
+    show_winner
+  end
+
+  def reset_round
+    sets_background
+    print_banner(welcome_message)
+    3.times {move_down_1}
+  end
+
+  def update_scores!
+    human.score += 1 if human.move.beats?(computer.move)
+    computer.score += 1 if computer.move.beats?(human.move)
+  end
+
+  def show_winner
+    2.times {move_down_1}
+    print_message(moves_message)
+    move_down_1
+    print_message(winner_message)
+    2.times {move_down_1}
+  end
+
+  def game_won?
+    human.score == MAX_SCORE || computer.score == MAX_SCORE
+  end
+
+  def play_again?
+    answer = nil
+    loop do
+      print_message_input ["Would you like to play again? (y/n)"]
+      answer = gets.chomp.downcase
+      break if ['y', 'n'].include? answer
+      print_message ["Invalid choice, please enter 'y' or 'n'"]
+      move_down_1
+    end
+    answer == 'y'
+  end
+
+  def show_move_history
+    sets_background
+    print_banner(Move.history)
+    2.times{move_down_1}
+  end
+
+  def reset_tournament
+    reset_round
+    Move.reset_move_history
+  end
+
+  def end_game
+    2.times{move_down_1}
+    print_message(goodbye_message)
+    move_to_bottom
+    sleep(2)
+    clear_screen
+  end
+
+  # game messages
   def welcome_message
     ["Welcome to Rock, Paper, Scissors, Lizard, Spock!", "",
       "Scissors cuts Paper covers Rock crushes",
       "Lizard poisons Spock smashes Scissors",
       "decapitates Lizard eats Paper disproves",
       "Spock vaporizes Rock crushes Scissors", "",
-      "The first player to win #{RPSGame::MAX_SCORE} games wins!"]
+      "The first player to win #{MAX_SCORE} games wins!"]
   end
 
   def expand_window_message
     ["Please expand your terminal window for optimal " \
       "experience"]
-  end
-
-  def reset_round
-    clear_screen
-    print_border
-    print_banner(welcome_message)
-    3.times {move_down_1}
-  end
-
-  def play_single_match
-    reset_round
-    human.chose
-    computer.chose
-    update_scores!
-    2.times {move_down_1}
-    print_message(moves_message)
-    move_down_1
-    print_message(winner_message)
-  end
-
-  def update_scores!
-    human.score += 1 if human.move.beats?(computer.move)
-    computer.score += 1 if computer.move.beats?(human.move)
   end
 
   def moves_message
@@ -291,7 +356,6 @@ class RPSGame
   def winner_message
     message = ["", "The current score:", "#{human.name} - #{human.score}",
               "#{computer.name} - #{computer.score}"]
-
     if human.move.beats?(computer.move)
       message.prepend("#{human.name} won!")
     elsif computer.move.beats?(human.move)
@@ -299,58 +363,11 @@ class RPSGame
     else
       message.prepend("It's a tie!")
     end
-
     message
-  end
-
-  def game_won?
-    human.score == MAX_SCORE || computer.score == MAX_SCORE
-  end
-
-  def play_again?
-    answer = nil
-
-    loop do
-      print_message_input ["Would you like to play again? (y/n)"]
-      answer = gets.chomp.downcase
-      break if ['y', 'n'].include? answer
-      print_message ["Invalid choice, please enter 'y' or 'n'"]
-      move_down_1
-    end
-
-    answer == 'y'
   end
 
   def goodbye_message
     ["Thanks for playing! Goodbye!"]
-  end
-
-  def play
-    print_border
-    expand_window if window_too_small?
-    print_banner(welcome_message)
-    human.set_name
-    computer.set_name
-    loop do
-      loop do
-        play_single_match
-        2.times {move_down_1}
-        break if game_won? || !(play_again?)
-        reset_round
-      end
-      clear_screen
-      print_border
-      print_banner(Move.history)
-      2.times{move_down_1}
-      break unless play_again?
-      reset_round
-      Move.reset_move_history
-    end
-    2.times{move_down_1}
-    print_message(goodbye_message)
-    move_to_bottom
-    sleep(2)
-    clear_screen
   end
 end
 
