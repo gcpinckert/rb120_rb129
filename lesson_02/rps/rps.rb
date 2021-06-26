@@ -89,7 +89,7 @@ class Move
   end
 
   def self.return_subclass_instance(choice)
-    Move::VALUES.each_with_index do |value, index|
+    Move::VALUES.each do |value|
       if choice == value
         return const_get(value.capitalize).new
       end
@@ -122,6 +122,13 @@ class Move
     end
 
     history
+  end
+end
+
+class RobotSuperMove < Move
+  def initialize(value)
+    @value = value
+    @beats = VALUES
   end
 end
 
@@ -210,13 +217,30 @@ class Human < Player
 end
 
 class Computer < Player
+  ROBOT_MOVES = {"Mother" => (Move::VALUES + ['alien']),
+                "Skynet" => (Move::VALUES + ['terminator']),
+                "Deep Thought" => (Move::VALUES + ['42']),
+                "Hal" => (Move::VALUES + ['pod bay doors']),
+                "C-3PO" => (Move::VALUES + ['lightsaber'])}
+
   def set_name
     self.name = ["Mother", "Skynet", "Deep Thought", "Hal", "C-3PO"].sample
   end
 
   def choose
-    self.move = Move.return_subclass_instance(Move::VALUES.sample)
+    self.move = personality_move(name)
     save_move
+  end
+
+  private
+
+  def personality_move(name)
+    choice = ROBOT_MOVES[name].sample
+    if Move::VALUES.include?(choice)
+      Move.return_subclass_instance(choice)
+    else 
+      RobotSuperMove.new(choice)
+    end
   end
 end
 
