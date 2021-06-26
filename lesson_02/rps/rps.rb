@@ -94,6 +94,7 @@ class Move
         return const_get(value.capitalize).new
       end
     end
+    return RobotSuperMove.new(choice)
   end
 
   def self.move_history
@@ -221,41 +222,101 @@ class Human < Player
 end
 
 class Computer < Player
-  ROBOT_MOVES = {"Mother" => (Move::VALUES + ['alien']),
-                "Skynet" => (Move::VALUES + ['terminator']),
-                "Deep Thought" => (Move::VALUES + ['42']),
-                "Hal" => (Move::VALUES + ['pod bay doors']),
-                "C-3PO" => (Move::VALUES + ['lightsaber'])}
+  attr_reader :move_percentages
 
-  def set_name
-    self.name = ["Mother", "Skynet", "Deep Thought", "Hal", "C-3PO"].sample
+  def initialize
+    super
+    @name = self.class.to_s
+    @move_percentages = { 'rock' => 20, 'paper' => 20, 'scissors' => 20,
+      'lizard' => 20, 'spock' => 20}
   end
 
   def choose
-    self.move = personality_move(name)
+    self.move = Move.return_subclass_instance(weighted_choice)
     save_move
   end
 
   private
 
-  def personality_move(name)
-    choice = ROBOT_MOVES[name].sample
-    if Move::VALUES.include?(choice)
-      Move.return_subclass_instance(choice)
-    else 
-      RobotSuperMove.new(choice)
+  def weighted_choice
+    list_of_choices = []
+    self.move_percentages.each do |move, percent|
+      percent.times { list_of_choices << move }
     end
+
+    list_of_choices.sample
+  end
+end
+
+class Hal < Computer
+  attr_reader :defeat_code, :super_move
+
+  def initialize
+    super
+    @defeat_code = 'bone'
+    @super_move = 'pod bay doors'
+    @move_percentages = { 'rock' => 10, 'paper' => 15, 'scissors' => 30,
+      'lizard' => 15, 'spock' => 20, 'pod bay doors' => 10 }
+  end
+end
+
+class Mother < Computer
+  attr_reader :defeat_code, :super_move
+
+  def initialize
+    super
+    @defeat_code = 'alien'
+    @super_move = 'ripley'
+    @move_percentages = { 'rock' => 20, 'paper' => 15, 'scissors' => 15,
+      'lizard' => 20, 'spock' => 20, 'alien' => 10 }
+  end
+end
+
+class Skynet < Computer
+  attr_reader :defeat_code, :super_move
+
+  def initialize
+    super
+    @defeat_code = 'sarah connor'
+    @super_move = 'terminator'
+    @move_percentages = { 'rock' => 30, 'paper' => 20, 'scissors' => 15,
+      'lizard' => 10, 'spock' => 15, 'terminator' => 10}
+  end
+end
+
+class DeepThought < Computer
+  attr_reader :defeat_code, :super_move
+
+  def initialize
+    super
+    @defeat_code = 'towel'
+    @super_move = '42'
+    @move_percentages = { 'rock' => 16, 'paper' => 20, 'scissors' => 18,
+      'lizard' => 20, 'spock' => 16, '42' => 10}
+  end
+end
+
+class C3PO < Computer
+  attr_reader :defeat_code, :super_move
+
+  def initialize
+    super
+    @defeat_code = 'r2d2'
+    @super_move = 'lightsaber'
+    @move_percentages = { 'rock' => 15, 'paper' => 30, 'scissors' => 15,
+      'lizard' => 20, 'spock' => 10, 'lightsaber' => 10}
   end
 end
 
 class RPSGame
   include Printable
 
-  MAX_SCORE = 5
+  MAX_SCORE = 10
+  OPPONENTS = [Hal.new, Mother.new, Skynet.new, DeepThought.new, C3PO.new]
 
   def initialize
     @human = Human.new
-    @computer = Computer.new
+    @computer = OPPONENTS.sample
   end
 
   def play
@@ -282,7 +343,6 @@ class RPSGame
     expand_window if window_too_small?
     print_banner(welcome_message)
     human.set_name
-    computer.set_name
   end
 
   def expand_window
