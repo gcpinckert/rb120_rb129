@@ -16,7 +16,7 @@ module Printable
   end
 
   def print_border
-    $stdout.write "#{CSI}2;1H"
+    $stdout.write "#{CSI}0;1H"
     2.times {puts BORDER_LINE}
     (@@rows - 5).times do
       puts HORIZONTAL_LINE
@@ -176,6 +176,10 @@ class Player
     @score = 0
   end
 
+  def reset_score
+    @score = 0
+  end
+
   private
 
   def save_move
@@ -247,7 +251,7 @@ end
 class RPSGame
   include Printable
 
-  MAX_SCORE = 10
+  MAX_SCORE = 5
 
   def initialize
     @human = Human.new
@@ -255,8 +259,8 @@ class RPSGame
   end
 
   def play
-    set_up_game
     loop do
+      set_up_game
       loop do
         play_single_match
         break if game_won? || !(play_again?)
@@ -274,16 +278,11 @@ class RPSGame
   attr_accessor :human, :computer
 
   def set_up_game
-    sets_background
+    print_border
     expand_window if window_too_small?
     print_banner(welcome_message)
     human.set_name
     computer.set_name
-  end
-
-  def sets_background
-    clear_screen
-    print_border
   end
 
   def expand_window
@@ -292,7 +291,7 @@ class RPSGame
       break if IO.console.winsize[0] >=50
     end
     @@rows, @@columns = IO.console.winsize
-    sets_background
+    print_border
   end
 
   def play_single_match
@@ -304,7 +303,7 @@ class RPSGame
   end
 
   def reset_round
-    sets_background
+    print_border
     print_banner(welcome_message)
     3.times {move_down_1}
   end
@@ -339,14 +338,16 @@ class RPSGame
   end
 
   def show_move_history
-    sets_background
-    print_banner(Move.history)
+    print_border
+    print_banner(Move.history + final_winner_message)
     2.times{move_down_1}
   end
 
   def reset_tournament
     reset_round
     Move.reset_move_history
+    human.reset_score
+    computer.reset_score
   end
 
   def end_game
@@ -364,6 +365,7 @@ class RPSGame
       "Lizard poisons Spock smashes Scissors",
       "decapitates Lizard eats Paper disproves",
       "Spock vaporizes Rock crushes Scissors", "",
+      "All your robot opponents have a super move that beats everything", "",
       "The first player to win #{MAX_SCORE} games wins!"]
   end
 
@@ -387,6 +389,20 @@ class RPSGame
     else
       message.prepend("It's a tie!")
     end
+    message
+  end
+
+  def final_winner_message
+    message = ["", "FINAL SCORE", "", "#{human.name} - #{human.score}",
+              "#{computer.name} - #{computer.score}", ""]
+    if human.score > computer.score
+      message << "~*~  #{human.name} is the ultimate champion!!  ~*~"
+    elsif computer.score > human.score
+      message << "~*~  #{computer.name} is the ultimate champion!!  ~*~"
+    else
+      message << "~*~  It's a tie!  ~*~"
+    end
+
     message
   end
 
