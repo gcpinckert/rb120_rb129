@@ -1,4 +1,5 @@
 require 'io/console'
+require 'pry'
 
 module Printable
   CSI = "\e["
@@ -191,6 +192,15 @@ end
 class Human < Player
   include Printable
 
+  DEFEAT_CODES = ['ripley', 'sarah connor', 'towel', 'bone', 'r2d2']
+
+  attr_accessor :defeat_code, :robot_opponent
+
+  def initialize
+    super
+    @defeat_code = false
+  end
+
   def set_name
     3.times {move_down_1}
     n = ''
@@ -205,19 +215,35 @@ class Human < Player
     self.name = n
   end
 
+  def set_opponent(opponent)
+    @robot_opponent = opponent
+  end
+
   def choose
     choice = nil
     loop do
       print_message_input ["Please make a choice: " \
                           "rock, paper, scissors, lizard, or spock:"]
       choice = gets.chomp.downcase
-      break if Move::VALUES.include? choice
+      break if Move::VALUES.include?(choice) || 
+        correct_defeat_found?(choice, robot_opponent)
       print_message ["Invalid choice."]
       move_down_1
     end
 
+    robot_defeated! if correct_defeat_found?(choice, robot_opponent)
     self.move = Move.return_subclass_instance(choice)
     save_move
+  end
+
+  private
+
+  def correct_defeat_found?(choice, robot_opponent)
+    choice == robot_opponent.defeat_code
+  end
+
+  def robot_defeated!
+    @defeat_code = true
   end
 end
 
@@ -317,6 +343,7 @@ class RPSGame
   def initialize
     @human = Human.new
     @computer = OPPONENTS.sample
+    human.set_opponent(computer)
   end
 
   def play
@@ -324,10 +351,11 @@ class RPSGame
       set_up_game
       loop do
         play_single_match
+        break if human.defeat_code
         break if game_won? || !(play_again?)
         reset_round
       end
-      show_move_history
+      human.defeat_code ? ultimate_win : show_move_history
       break unless play_again?
       reset_tournament
     end
@@ -359,6 +387,7 @@ class RPSGame
     human.choose
     computer.choose
     update_scores!
+    return if human.defeat_code
     show_winner
   end
 
@@ -403,12 +432,21 @@ class RPSGame
     2.times{move_down_1}
   end
 
+  def ultimate_win
+    print_border
+    print_banner(Move.history + ultimate_win_message)
+    2.times{move_down_1}
+  end
+
   def reset_tournament
+    # TODO figure out how to reset a new opponent (robot obj)
     reset_round
     Move.reset_move_history
     human.reset_score
     computer.reset_score
+    human.defeat_code = false
   end
+
 
   def end_game
     2.times{move_down_1}
@@ -418,14 +456,16 @@ class RPSGame
     clear_screen
   end
 
-  # game messages
+  # game messages follow
   def welcome_message
     ["Welcome to Rock, Paper, Scissors, Lizard, Spock!", "",
       "Scissors cuts Paper covers Rock crushes",
       "Lizard poisons Spock smashes Scissors",
       "decapitates Lizard eats Paper disproves",
       "Spock vaporizes Rock crushes Scissors", "",
-      "All your robot opponents have a super move that beats everything", "",
+      "All your robot opponents have a super move that beats everything", 
+      "but there is a secret code you can enter to defeat them",
+      "See if you can find them both - good luck!", "",
       "The first player to win #{MAX_SCORE} games wins!"]
   end
 
@@ -464,6 +504,13 @@ class RPSGame
     end
 
     message
+  end
+
+  def ultimate_win_message
+    ["", "~*~  CONGRATULATIONS!! ~*~", "",
+      "You have found the ultimate defeat code", "",
+      "#{computer.name} has been vanquished and humanity is saved!",
+      "#{human.name} is the ultimate winner!!"]
   end
 
   def goodbye_message
