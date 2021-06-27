@@ -1,5 +1,4 @@
 require 'io/console'
-require 'pry'
 
 module Printable
   CSI = "\e["
@@ -11,18 +10,18 @@ module Printable
   def window_too_small?
     @@rows < 50
   end
-  
+
   def clear_screen
     system("clear") || system("cls")
   end
 
   def print_border
     $stdout.write "#{CSI}0;1H"
-    2.times {puts BORDER_LINE}
+    2.times { puts BORDER_LINE }
     (@@rows - 5).times do
       puts HORIZONTAL_LINE
     end
-    2.times{puts BORDER_LINE}
+    2.times { puts BORDER_LINE }
   end
 
   def print_banner(message)
@@ -71,7 +70,7 @@ class Move
   include Printable
 
   VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
-  
+
   @@move_history = Hash.new([])
 
   attr_reader :beats, :value
@@ -95,7 +94,7 @@ class Move
         return const_get(value.capitalize).new
       end
     end
-    return RobotSuperMove.new(choice)
+    RobotSuperMove.new(choice)
   end
 
   def self.move_history
@@ -113,13 +112,13 @@ class Move
                      player2.center(INSIDE_WIDTH / 3)
 
     # history display headings
-    history = ["MOVE HISTORY", "",  table_headings, ""]
+    history = ["MOVE HISTORY", "", table_headings, ""]
 
     # results for each round
     (0...@@move_history[player1].size).each do |i|
-      round_line = "(#{i + 1})".center(INSIDE_WIDTH / 3) + 
-                   "#{@@move_history[player1][i]}".center(INSIDE_WIDTH / 3) +
-                   "#{@@move_history[player2][i]}".center(INSIDE_WIDTH / 3)
+      round_line = "(#{i + 1})".center(INSIDE_WIDTH / 3) +
+                   @@move_history[player1][i].to_s.center(INSIDE_WIDTH / 3) +
+                   @@move_history[player2][i].to_s.center(INSIDE_WIDTH / 3)
       history << round_line
     end
 
@@ -202,7 +201,7 @@ class Human < Player
   end
 
   def set_name
-    3.times {move_down_1}
+    3.times { move_down_1 }
     n = ''
     loop do
       print_message_input ["What's your name?"]
@@ -215,18 +214,14 @@ class Human < Player
     self.name = n
   end
 
-  def set_opponent(opponent)
-    @robot_opponent = opponent
-  end
-
   def choose
     choice = nil
     loop do
       print_message_input ["Please make a choice: " \
                           "rock, paper, scissors, lizard, or spock:"]
       choice = gets.chomp.downcase
-      break if Move::VALUES.include?(choice) || 
-        correct_defeat_found?(choice, robot_opponent)
+      break if Move::VALUES.include?(choice) ||
+               correct_defeat_found?(choice, robot_opponent)
       print_message ["Invalid choice."]
       move_down_1
     end
@@ -254,7 +249,7 @@ class Computer < Player
     super
     @name = self.class.to_s
     @move_percentages = { 'rock' => 20, 'paper' => 20, 'scissors' => 20,
-      'lizard' => 20, 'spock' => 20}
+                          'lizard' => 20, 'spock' => 20 }
   end
 
   def choose
@@ -266,7 +261,7 @@ class Computer < Player
 
   def weighted_choice
     list_of_choices = []
-    self.move_percentages.each do |move, percent|
+    move_percentages.each do |move, percent|
       percent.times { list_of_choices << move }
     end
 
@@ -282,7 +277,7 @@ class Hal < Computer
     @defeat_code = 'bone'
     @super_move = 'pod bay doors'
     @move_percentages = { 'rock' => 10, 'paper' => 15, 'scissors' => 30,
-      'lizard' => 15, 'spock' => 20, 'pod bay doors' => 10 }
+                          'lizard' => 15, 'spock' => 20, 'pod bay doors' => 10 }
   end
 end
 
@@ -294,7 +289,7 @@ class Mother < Computer
     @defeat_code = 'alien'
     @super_move = 'ripley'
     @move_percentages = { 'rock' => 20, 'paper' => 15, 'scissors' => 15,
-      'lizard' => 20, 'spock' => 20, 'alien' => 10 }
+                          'lizard' => 20, 'spock' => 20, 'alien' => 10 }
   end
 end
 
@@ -306,7 +301,7 @@ class Skynet < Computer
     @defeat_code = 'sarah connor'
     @super_move = 'terminator'
     @move_percentages = { 'rock' => 30, 'paper' => 20, 'scissors' => 15,
-      'lizard' => 10, 'spock' => 15, 'terminator' => 10}
+                          'lizard' => 10, 'spock' => 15, 'terminator' => 10 }
   end
 end
 
@@ -318,7 +313,7 @@ class DeepThought < Computer
     @defeat_code = 'towel'
     @super_move = '42'
     @move_percentages = { 'rock' => 16, 'paper' => 20, 'scissors' => 18,
-      'lizard' => 20, 'spock' => 16, '42' => 10}
+                          'lizard' => 20, 'spock' => 16, '42' => 10 }
   end
 end
 
@@ -330,7 +325,7 @@ class C3PO < Computer
     @defeat_code = 'r2d2'
     @super_move = 'lightsaber'
     @move_percentages = { 'rock' => 15, 'paper' => 30, 'scissors' => 15,
-      'lizard' => 20, 'spock' => 10, 'lightsaber' => 10}
+                          'lizard' => 20, 'spock' => 10, 'lightsaber' => 10 }
   end
 end
 
@@ -343,7 +338,7 @@ class RPSGame
   def initialize
     @human = Human.new
     @computer = OPPONENTS.sample
-    human.set_opponent(computer)
+    human.robot_opponent = computer
   end
 
   def play
@@ -376,7 +371,7 @@ class RPSGame
   def expand_window
     print_banner(expand_window_message)
     loop do
-      break if IO.console.winsize[0] >=50
+      break if IO.console.winsize[0] >= 50
     end
     @@rows, @@columns = IO.console.winsize
     print_border
@@ -394,7 +389,7 @@ class RPSGame
   def reset_round
     print_border
     print_banner(welcome_message)
-    3.times {move_down_1}
+    3.times { move_down_1 }
   end
 
   def update_scores!
@@ -403,11 +398,11 @@ class RPSGame
   end
 
   def show_winner
-    2.times {move_down_1}
+    2.times { move_down_1 }
     print_message(moves_message)
     move_down_1
     print_message(winner_message)
-    2.times {move_down_1}
+    2.times { move_down_1 }
   end
 
   def game_won?
@@ -429,17 +424,16 @@ class RPSGame
   def show_move_history
     print_border
     print_banner(Move.history + final_winner_message)
-    2.times{move_down_1}
+    2.times { move_down_1 }
   end
 
   def ultimate_win
     print_border
     print_banner(Move.history + ultimate_win_message)
-    2.times{move_down_1}
+    2.times { move_down_1 }
   end
 
   def reset_tournament
-    # TODO figure out how to reset a new opponent (robot obj)
     reset_round
     Move.reset_move_history
     human.reset_score
@@ -447,9 +441,8 @@ class RPSGame
     human.defeat_code = false
   end
 
-
   def end_game
-    2.times{move_down_1}
+    2.times { move_down_1 }
     print_message(goodbye_message)
     move_to_bottom
     sleep(2)
@@ -459,58 +452,65 @@ class RPSGame
   # game messages follow
   def welcome_message
     ["Welcome to Rock, Paper, Scissors, Lizard, Spock!", "",
-      "Scissors cuts Paper covers Rock crushes",
-      "Lizard poisons Spock smashes Scissors",
-      "decapitates Lizard eats Paper disproves",
-      "Spock vaporizes Rock crushes Scissors", "",
-      "All your robot opponents have a super move that beats everything", 
-      "but there is a secret code you can enter to defeat them",
-      "See if you can find them both - good luck!", "",
-      "The first player to win #{MAX_SCORE} games wins!"]
+     "Scissors cuts Paper covers Rock crushes",
+     "Lizard poisons Spock smashes Scissors",
+     "decapitates Lizard eats Paper disproves",
+     "Spock vaporizes Rock crushes Scissors", "",
+     "All your robot opponents have a super move that beats everything",
+     "but there is a secret code you can enter to defeat them",
+     "See if you can find them both - good luck!", "",
+     "The first player to win #{MAX_SCORE} games wins!"]
   end
 
   def expand_window_message
     ["Please expand your terminal window for optimal " \
-      "experience"]
+     "experience"]
   end
 
   def moves_message
     ["#{human.name} chose #{human.move}",
-    "#{computer.name} chose #{computer.move}"]
+     "#{computer.name} chose #{computer.move}"]
   end
 
   def winner_message
     message = ["", "The current score:", "#{human.name} - #{human.score}",
-              "#{computer.name} - #{computer.score}"]
-    if human.move.beats?(computer.move)
-      message.prepend("#{human.name} won!")
-    elsif computer.move.beats?(human.move)
-      message.prepend("#{computer.name} won!")
-    else
-      message.prepend("It's a tie!")
-    end
+               "#{computer.name} - #{computer.score}"]
+    message.prepend(winner_result)
     message
+  end
+
+  def winner_result
+    if human.move.beats?(computer.move)
+      "#{human.name} won!"
+    elsif computer.move.beats?(human.move)
+      "#{computer.name} won!"
+    else
+      "It's a tie!"
+    end
   end
 
   def final_winner_message
     message = ["", "FINAL SCORE", "", "#{human.name} - #{human.score}",
-              "#{computer.name} - #{computer.score}", ""]
-    if human.score > computer.score
-      message << "~*~  #{human.name} is the ultimate champion!!  ~*~"
-    elsif computer.score > human.score
-      message << "~*~  #{computer.name} is the ultimate champion!!  ~*~"
-    else
-      message << "~*~  It's a tie!  ~*~"
-    end
-
+               "#{computer.name} - #{computer.score}", ""]
+    message << final_winner_result
     message
+  end
+
+  def final_winner_result
+    if human.score > computer.score
+      "~*~  #{human.name} is the ultimate champion!!  ~*~"
+    elsif computer.score > human.score
+      "~*~  #{computer.name} is the ultimate champion!!  ~*~"
+    else
+      "~*~  It's a tie!  ~*~"
+    end
   end
 
   def ultimate_win_message
     ["", "~*~  CONGRATULATIONS!! ~*~", "",
-      "You have found the ultimate defeat code", "",
-      "#{computer.name} has been vanquished and humanity is saved!",
-      "#{human.name} is the ultimate winner!!"]
+     "You have found the ultimate defeat code", "",
+     "#{computer.name} has been vanquished and humanity is saved!",
+     "#{human.name} is the ultimate winner!!"]
   end
 
   def goodbye_message
