@@ -105,25 +105,28 @@ class Move
     @@move_history = Hash.new([])
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def self.history
+    column_width = INSIDE_WIDTH / 3
     player1, player2 = @@move_history.keys
-    table_headings = "Round".center(INSIDE_WIDTH / 3) +
-                     player1.center(INSIDE_WIDTH / 3) +
-                     player2.center(INSIDE_WIDTH / 3)
+    column_headings = "Round".center(column_width) +
+                      player1.center(column_width) +
+                      player2.center(column_width)
 
-    # history display headings
-    history = ["MOVE HISTORY", "", table_headings, ""]
+    # the headings of for the history table display
+    history = ["MOVE HISTORY", "", column_headings, ""]
 
-    # results for each round
+    # generates each row of the table in the display
     (0...@@move_history[player1].size).each do |i|
-      round_line = "(#{i + 1})".center(INSIDE_WIDTH / 3) +
-                   @@move_history[player1][i].to_s.center(INSIDE_WIDTH / 3) +
-                   @@move_history[player2][i].to_s.center(INSIDE_WIDTH / 3)
-      history << round_line
+      row = "(#{i + 1})".center(column_width) +
+            @@move_history[player1][i].to_s.center(column_width) +
+            @@move_history[player2][i].to_s.center(column_width)
+      history << row
     end
 
     history
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 end
 
 class RobotSuperMove < Move
@@ -214,6 +217,7 @@ class Human < Player
     self.name = n
   end
 
+  # rubocop:disable Metrics/MethodLength
   def choose
     choice = nil
     loop do
@@ -230,6 +234,7 @@ class Human < Player
     self.move = Move.return_subclass_instance(choice)
     save_move
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -341,6 +346,7 @@ class RPSGame
     human.robot_opponent = computer
   end
 
+  # rubocop:disable Metrics/MethodLength
   def play
     loop do
       set_up_game
@@ -356,6 +362,7 @@ class RPSGame
     end
     end_game
   end
+  # rubocop:enable Metrics/MethodLength
 
   private
 
