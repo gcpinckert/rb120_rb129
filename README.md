@@ -11,6 +11,7 @@
   - [Lecture: Inheritance](./lesson_02/04_lecture_inheritance.rb)
   - [Rock Paper Scissors](./lesson_02/rps)
     - [Walkthrough Sample Code and Notes](./lesson_02/rps/walkthrough.rb)
+    - [RPS: Bonus Features Project](./lesson_02/rps/rps.rb)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
