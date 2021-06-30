@@ -12,6 +12,8 @@
   - [Rock Paper Scissors](./lesson_02/rps)
     - [Walkthrough Sample Code and Notes](./lesson_02/rps/walkthrough.rb)
     - [RPS: Bonus Features Project](./lesson_02/rps/rps.rb)
+- [Lesson 04](./lesson_04)
+  - [Practice Problems: Easy 1](./lesson_04/easy_1)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
