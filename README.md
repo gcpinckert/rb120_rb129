@@ -15,6 +15,7 @@
 - [Lesson 04](./lesson_04)
   - [Practice Problems: Easy 1](./lesson_04/easy_1)
   - [Practice Problems: Easy 2](./lesson_04/easy_2.md)
+  - [Practice Problems: Easy 3](./lesson_04/easy_3.md)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
