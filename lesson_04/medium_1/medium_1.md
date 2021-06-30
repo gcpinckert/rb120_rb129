@@ -107,3 +107,30 @@ Above, we use the setter method defined by the expression `attr_accessor :templa
 Both code examples have the same results when executed.
 
 ## Question 7
+
+```ruby
+class Light
+  attr_accessor :brightness, :color
+
+  def initialize(brightness, color)
+    @brightness = brightness
+    @color = color
+  end
+
+  def light_status
+    "I have a brightness level of #{brightness} and a color of #{color}"
+  end
+
+end
+```
+
+We could call the method `light_status` on line 9 simply `status`. This is because it will have to be called on a `Light` object, so the fact that it is the status of the `Light` instance in question will be given when the method is invoked.
+
+```ruby
+# with method named as is
+green_light = Light.new('high', 'green')
+green_light.light_status
+
+# with method name changed
+green_light.status
+```
