@@ -16,6 +16,12 @@
   - [Practice Problems: Easy 1](./lesson_04/easy_1)
   - [Practice Problems: Easy 2](./lesson_04/easy_2.md)
   - [Practice Problems: Easy 3](./lesson_04/easy_3.md)
+  - [Practice Problems: Medium 1](./lesson_04/medium_1)
+  - [Practice Problems: Hard 1](./lesson_04/medium_1)
+- [Lesson 05](./lesson_05)
+  - [Tic Tac Toe]
+    - [TicTacToe Summary](./lesson_05/ttt/ttt_summary.md)
+    - [TicTacToe Walkthrough](./lesson_05/ttt_walkthrough.rb)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
