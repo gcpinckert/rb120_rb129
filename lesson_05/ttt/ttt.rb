@@ -3,6 +3,8 @@ class Board
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
                   [[1, 5, 9], [3, 5, 7]]              # diagonals
 
+  attr_reader :squares
+
   def initialize
     @squares = {}
     reset
@@ -140,7 +142,6 @@ end
 class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
-  FIRST_TO_MOVE = HUMAN_MARKER
   MAX_SCORE = 5
 
   attr_reader :board, :human, :computer
@@ -149,12 +150,12 @@ class TTTGame
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
-    @current_marker = FIRST_TO_MOVE
   end
 
   def play
     clear
     display_welcome_message
+    set_up_game
     loop do
       main_game
       display_winner
@@ -166,6 +167,30 @@ class TTTGame
   end
 
   private
+
+  def set_up_game
+    set_first_player
+  end
+
+  def ask_first_player
+    answer = nil
+    loop do
+      puts "Who should go first (h)uman, (c)omputer, or (r)andom?"
+      answer = gets.chomp.downcase
+      break if ['h', 'c', 'r'].include?(answer)
+      puts "Please enter 'h', 'c', or 'r'"
+    end
+
+    answer
+  end
+
+  def set_first_player
+    case ask_first_player
+    when 'h' then @current_marker = HUMAN_MARKER
+    when 'c' then @current_marker = COMPUTER_MARKER
+    when 'r' then @current_marker = [HUMAN_MARKER, COMPUTER_MARKER].sample
+    end
+  end
 
   def main_game
     loop do
@@ -244,6 +269,8 @@ class TTTGame
       offensive_move
     elsif board.at_risk_square
       defensive_move
+    elsif board.squares[5].unmarked?
+      board[5] = computer.marker
     else
       board[board.unmarked_keys.sample] = computer.marker
     end
@@ -306,7 +333,7 @@ class TTTGame
 
   def reset
     board.reset
-    @current_marker = FIRST_TO_MOVE
+    @current_marker = set_first_player
     clear
   end
 
