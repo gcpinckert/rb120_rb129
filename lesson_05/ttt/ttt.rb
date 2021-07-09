@@ -161,7 +161,7 @@ class TTTGame
   end
 
   def human_moves
-    puts "Choose a square (#{board.unmarked_keys.join(', ')}): "
+    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
     square = nil
     loop do
       square = gets.chomp.to_i
@@ -170,6 +170,14 @@ class TTTGame
     end
 
     board[square] = human.marker
+  end
+
+  def joinor(squares)
+    if squares.size < 3
+      squares.join(' or ')
+    else
+      squares[0..-2].join(', ') + ' or ' + squares[-1].to_s
+    end
   end
 
   def computer_moves
