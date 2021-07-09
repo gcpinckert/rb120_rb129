@@ -9,6 +9,8 @@ class Board
     reset
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def draw
     puts "     |     |"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
@@ -22,6 +24,8 @@ class Board
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
     puts "     |     |"
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   # invoked when either player selects their move
   # allows us to update board with special syntax
@@ -110,6 +114,28 @@ class TTTGame
     @humans_turn = true
   end
 
+  # orchestration method - should only contain other method calls
+  def play
+    clear
+    display_welcome_message
+
+    main_game
+    display_goodbye_message
+  end
+
+  private
+
+  def main_game
+    loop do
+      display_board
+      player_move
+      display_result
+      break unless play_again?
+      reset
+      display_play_again_message
+    end
+  end
+
   def clear
     system("clear") || system("cls")
   end
@@ -136,6 +162,15 @@ class TTTGame
     display_board
   end
 
+  def player_move
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+
+      clear_screen_and_display_board
+    end
+  end
+
   def current_player_moves
     @humans_turn ? human_moves : computer_moves
     @humans_turn = !@humans_turn
@@ -149,7 +184,6 @@ class TTTGame
       break if board.unmarked_keys.include?(square)
       puts "Sorry, that's not a valid choice."
     end
-
 
     # two valid choices for who sets the square
     board[square] = human.marker
@@ -194,26 +228,6 @@ class TTTGame
   def display_play_again_message
     puts "Let's play again!"
     puts ""
-  end
-
-  def play
-    clear
-    display_welcome_message
-
-    loop do
-      display_board
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-
-        clear_screen_and_display_board
-      end
-      display_result
-      break unless play_again?
-      reset
-      display_play_again_message
-    end
-    display_goodbye_message
   end
 end
 
