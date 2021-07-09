@@ -21,7 +21,7 @@
 - [Lesson 05](./lesson_05)
   - [Tic Tac Toe]
     - [TicTacToe Summary](./lesson_05/ttt/ttt_summary.md)
-    - [TicTacToe Walkthrough](./lesson_05/ttt_walkthrough.rb)
+    - [TicTacToe Walkthrough](./lesson_05/ttt/ttt_walkthrough.rb)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
