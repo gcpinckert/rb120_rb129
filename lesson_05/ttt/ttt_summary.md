@@ -55,7 +55,7 @@ class Player
 end
 ```
 
-Make sure we have a class for a __basic orchestration engine__. This should contain the `play` method that we previously categorized with `Player`. 
+Make sure we have a class for a __basic orchestration engine__. This should contain the `play` method that we previously categorized with `Player`.
 
 ```ruby
 class TTTGame
