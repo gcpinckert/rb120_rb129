@@ -16,6 +16,17 @@ class Board
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
+  def at_risk_square
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if defend_this_line?(squares)
+        return square_to_defend(squares)
+      end
+    end
+
+    nil
+  end
+
   def full?
     unmarked_keys.empty?
   end
@@ -60,6 +71,16 @@ class Board
     markers = squares.select(&:marked?).collect(&:marker)
     return false if markers.size != 3
     markers.min == markers.max
+  end
+
+  def defend_this_line?(squares)
+    markers = squares.collect(&:marker)
+    markers.count(TTTGame::HUMAN_MARKER) == 2 &&
+    markers.count(Square::INITIAL_MARKER) == 1
+  end
+
+  def square_to_defend(squares)
+    squares.select(&:unmarked?).first
   end
 end
 
@@ -202,7 +223,15 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    if board.at_risk_square
+      defensive_move
+    else
+      board[board.unmarked_keys.sample] = computer.marker
+    end
+  end
+
+  def defensive_move
+    board.at_risk_square.marker = computer.marker
   end
 
   def current_player_moves
