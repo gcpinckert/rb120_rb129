@@ -87,9 +87,15 @@ end
 
 class Player
   attr_reader :marker
+  attr_accessor :score
 
   def initialize(marker)
     @marker = marker
+    @score = 0
+  end
+
+  def reset_score
+    self.score = 0
   end
 end
 
@@ -97,6 +103,7 @@ class TTTGame
   HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
   FIRST_TO_MOVE = HUMAN_MARKER
+  MAX_SCORE = 5
 
   attr_reader :board, :human, :computer
 
@@ -110,7 +117,13 @@ class TTTGame
   def play
     clear
     display_welcome_message
-    main_game
+    loop do
+      main_game
+      display_winner
+      break unless play_again?
+      reset
+      reset_scores
+    end
     display_goodbye_message
   end
 
@@ -121,9 +134,9 @@ class TTTGame
       display_board
       player_move
       display_result
-      break unless play_again?
+      break if tournament_winner?
+      quit unless play_again?
       reset
-      display_play_again_message
     end
   end
 
@@ -138,6 +151,14 @@ class TTTGame
   def display_welcome_message
     puts "Welcome to Tic Tac Toe!"
     puts ""
+  end
+
+  def display_winner
+    if human.score > computer.score
+      puts "You have won the tournament!"
+    else
+      puts "The computer has won. You lost the tournament."
+    end
   end
 
   def display_goodbye_message
@@ -199,12 +220,20 @@ class TTTGame
 
     case board.winning_marker
     when human.marker
+      human.score += 1
       puts "You won!"
     when computer.marker
+      computer.score += 1
       puts "Computer won!"
     else
       puts "It's a tie!"
     end
+
+    puts "The score is now: You - #{human.score} Computer - #{computer.score}"
+  end
+
+  def tournament_winner?
+    human.score == MAX_SCORE || computer.score == MAX_SCORE
   end
 
   def play_again?
@@ -229,9 +258,14 @@ class TTTGame
     clear
   end
 
-  def display_play_again_message
-    puts "Let's play again!"
-    puts ""
+  def reset_scores
+    human.score = 0
+    computer.score = 0
+  end
+
+  def quit
+    display_goodbye_message
+    exit
   end
 end
 
