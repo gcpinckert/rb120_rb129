@@ -16,11 +16,22 @@ class Board
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
+  def possible_win_square
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      if complete_this_line?(squares)
+        return unmarked_square_from_line(squares)
+      end
+    end
+
+    nil
+  end
+
   def at_risk_square
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
       if defend_this_line?(squares)
-        return square_to_defend(squares)
+        return unmarked_square_from_line(squares)
       end
     end
 
@@ -73,13 +84,19 @@ class Board
     markers.min == markers.max
   end
 
+  def complete_this_line?(squares)
+    markers = squares.collect(&:marker)
+    markers.count(TTTGame::COMPUTER_MARKER) == 2 &&
+    markers.count(Square::INITIAL_MARKER) == 1 
+  end
+
   def defend_this_line?(squares)
     markers = squares.collect(&:marker)
     markers.count(TTTGame::HUMAN_MARKER) == 2 &&
     markers.count(Square::INITIAL_MARKER) == 1
   end
 
-  def square_to_defend(squares)
+  def unmarked_square_from_line(squares)
     squares.select(&:unmarked?).first
   end
 end
@@ -223,11 +240,17 @@ class TTTGame
   end
 
   def computer_moves
-    if board.at_risk_square
+    if board.possible_win_square
+      offensive_move
+    elsif board.at_risk_square
       defensive_move
     else
       board[board.unmarked_keys.sample] = computer.marker
     end
+  end
+
+  def offensive_move
+    board.possible_win_square.marker = computer.marker
   end
 
   def defensive_move
