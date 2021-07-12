@@ -215,11 +215,11 @@ class Human < Player
 
   def ask_human_marker
     answer = nil
+    print_message_input ["Choose a letter to be your marker. Cannot be 'O'."]
     loop do
-      print_message_input ["Choose a letter to be your marker. Cannot be 'O'."]
       answer = gets.chomp.upcase
       break if ('A'..'Z').include?(answer) && answer != 'O'
-      print_message ["Please choose a letter A-Z. Must not be 'O'."]
+      print_message_input ["Please choose a letter A-Z. Must not be 'O'."]
     end
 
     answer
@@ -241,7 +241,7 @@ class TTTGame
   include Printable
 
   COMPUTER_MARKER = "O"
-  MAX_SCORE = 5
+  MAX_SCORE = 3
 
   attr_reader :board, :human, :computer
 
@@ -257,19 +257,19 @@ class TTTGame
     display_welcome_message
     set_first_player
     play_tournament
-    display_goodbye_message
+    quit
   end
 
   private
 
   def ask_first_player
     answer = nil
+    print_message_input ["Who should go first human, computer, or random?",
+                         "Enter 'h', 'c', or 'r'."]
     loop do
-      print_message_input ["Who should go first human, computer, or random?",
-                           "Enter 'h', 'c', or 'r'."]
       answer = gets.chomp.downcase
       break if ['h', 'c', 'r'].include?(answer)
-      print_message ["Please enter 'h', 'c', or 'r'"]
+      print_message_input ["Please enter 'h', 'c', or 'r'"]
     end
 
     answer
@@ -318,15 +318,16 @@ class TTTGame
                        "Your goal: get three #{human.marker}'s in a row",
                        "either vertically, horizontally, or diagonally.",
                        "Beware, #{computer.name} is trying to do the same.",
-                       "Block them wherever you can! Good luck!", ""]
+                       "Block them wherever you can!", "",
+                       "The first one to win #{MAX_SCORE} games wins!", ""]
     print_banner(welcome_message)
   end
 
   def display_winner
     if human.score > computer.score
-      puts "#{human.name} has won the tournament!"
+      print_message ["#{human.name} has won the tournament!"]
     else
-      puts "#{computer.name} has won. I'm sorry, #{human.name}, you lost."
+      print_message ["#{computer.name} has won the tournament!"]
     end
   end
 
@@ -359,7 +360,7 @@ class TTTGame
     loop do
       square = gets.chomp.to_i
       break if board.unmarked_keys.include?(square)
-      print_message ["Sorry, that's not a valid choice."]
+      print_message_input ["Sorry, that's not a valid choice."]
     end
 
     board[square] = human.marker
