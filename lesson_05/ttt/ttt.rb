@@ -18,6 +18,10 @@ class Board
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
+  def center_square_open?
+    @squares[5].unmarked?
+  end
+
   def at_risk_square(marker)
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
@@ -51,21 +55,24 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
-  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def draw
+    puts " (1)   (2)   (3)"
     puts "     |     |"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
     puts "     |     |"
     puts "-----+-----+-----"
+    puts " (4)   (5)   (6)"
     puts "     |     |"
     puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
     puts "     |     |"
     puts "-----+-----+-----"
+    puts " (7)   (8)   (9)"
     puts "     |     |"
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
     puts "     |     |"
   end
-  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   private
 
@@ -78,11 +85,11 @@ class Board
   def complete_this_line?(squares, marker)
     markers = squares.collect(&:marker)
     markers.count(marker) == 2 &&
-    markers.count(Square::INITIAL_MARKER) == 1 
+      markers.count(Square::INITIAL_MARKER) == 1
   end
 
   def key_of_unmarked_square_from_line(line)
-    @squares.select do |sq_num, square| 
+    @squares.select do |sq_num, square|
       line.include?(sq_num) && square.unmarked?
     end.keys.first
   end
@@ -187,13 +194,7 @@ class TTTGame
     clear
     display_welcome_message
     set_up_game
-    loop do
-      main_game
-      display_winner
-      break unless play_again?
-      reset
-      reset_scores
-    end
+    play_tournament
     display_goodbye_message
   end
 
@@ -223,10 +224,21 @@ class TTTGame
     end
   end
 
+  def play_tournament
+    loop do
+      main_game
+      display_winner
+      break unless play_again?
+      reset
+      reset_scores
+    end
+  end
+
   def main_game
     loop do
       display_board
       player_move
+      update_score
       display_result
       break if tournament_winner?
       quit unless play_again?
@@ -244,6 +256,7 @@ class TTTGame
 
   def display_welcome_message
     puts "Hi #{human.name}!"
+    puts ""
     puts "Welcome to Tic Tac Toe!"
     puts ""
     puts "The rules are simple, get three #{human.marker}'s in a row"
@@ -257,11 +270,12 @@ class TTTGame
     if human.score > computer.score
       puts "#{human.name} has won the tournament!"
     else
-      puts "#{computer.name} has won. I'm sorry, #{human.name}, you lost the tournament."
+      puts "#{computer.name} has won. I'm sorry, #{human.name}, you lost."
     end
   end
 
   def display_goodbye_message
+    puts ""
     puts "Thanks for playing Tic Tac Toe! Goodbye!"
   end
 
@@ -274,12 +288,17 @@ class TTTGame
     @current_marker == human.marker
   end
 
+  # rubocop:disable Metrics/AbcSize
   def display_board
-    puts "#{human.name} is: #{human.marker}. #{computer.name} is: #{computer.marker}."
+    puts ""
+    puts "#{human.name} - #{human.marker} " \
+      "#{computer.name} - #{computer.marker}"
+    puts "#{human.name} - #{human.score} #{computer.name} - #{computer.score}"
     puts ""
     board.draw
     puts ""
   end
+  # rubocop:enable Metrics/AbcSize
 
   def human_moves
     puts "Choose a square (#{joinor(board.unmarked_keys)}): "
@@ -303,14 +322,30 @@ class TTTGame
 
   def computer_moves
     if !!board.at_risk_square(COMPUTER_MARKER)
-      board[board.at_risk_square(COMPUTER_MARKER)] = COMPUTER_MARKER
+      offensive_move
     elsif !!board.at_risk_square(human.marker)
-      board[board.at_risk_square(human.marker)] = COMPUTER_MARKER
-    elsif board.squares[5].unmarked?
-      board[5] = COMPUTER_MARKER
+      defensive_move
+    elsif board.center_square_open?
+      select_center_square
     else
-      board[board.unmarked_keys.sample] = COMPUTER_MARKER
+      select_random_square
     end
+  end
+
+  def offensive_move
+    board[board.at_risk_square(COMPUTER_MARKER)] = COMPUTER_MARKER
+  end
+
+  def defensive_move
+    board[board.at_risk_square(human.marker)] = COMPUTER_MARKER
+  end
+
+  def select_center_square
+    board[5] = COMPUTER_MARKER
+  end
+
+  def select_random_square
+    board[board.unmarked_keys.sample] = COMPUTER_MARKER
   end
 
   def current_player_moves
@@ -323,22 +358,30 @@ class TTTGame
     end
   end
 
+  def update_score
+    case board.winning_marker
+    when human.marker then human.score += 1
+    when computer.marker then computer.score += 1
+    end
+  end
+
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def display_result
     clear_screen_and_display_board
 
     case board.winning_marker
     when human.marker
-      human.score += 1
       puts "#{human.name} won!"
     when computer.marker
-      computer.score += 1
       puts "#{computer.name} won!"
     else
       puts "It's a tie!"
     end
 
-    puts "The score is now: #{human.name} - #{human.score} #{computer.name} - #{computer.score}"
+    puts "The score is now: #{human.name} - #{human.score}" \
+      " #{computer.name} - #{computer.score}"
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def tournament_winner?
     human.score == MAX_SCORE || computer.score == MAX_SCORE

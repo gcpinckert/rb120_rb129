@@ -22,7 +22,7 @@
   - [Tic Tac Toe](./lesson_05/ttt)
     - [TicTacToe Summary](./lesson_05/ttt/ttt_summary.md)
     - [TicTacToe Walkthrough](./lesson_05/ttt/ttt_walkthrough.rb)
-    -[TicTacToe w/ Bonus Features](./lesson_05/ttt/ttt.rb)
+    -[TicTacToe w/ Bonus Features Project](./lesson_05/ttt/ttt.rb)
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
