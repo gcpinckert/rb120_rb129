@@ -18,22 +18,11 @@ class Board
     @squares.keys.select { |key| @squares[key].unmarked? }
   end
 
-  def possible_win_square
+  def at_risk_square(marker)
     WINNING_LINES.each do |line|
       squares = @squares.values_at(*line)
-      if complete_this_line?(squares)
-        return unmarked_square_from_line(squares)
-      end
-    end
-
-    nil
-  end
-
-  def at_risk_square
-    WINNING_LINES.each do |line|
-      squares = @squares.values_at(*line)
-      if defend_this_line?(squares)
-        return unmarked_square_from_line(squares)
+      if complete_this_line?(squares, marker)
+        return key_of_unmarked_square_from_line(line)
       end
     end
 
@@ -86,20 +75,16 @@ class Board
     markers.min == markers.max
   end
 
-  def complete_this_line?(squares)
+  def complete_this_line?(squares, marker)
     markers = squares.collect(&:marker)
-    markers.count(TTTGame::COMPUTER_MARKER) == 2 &&
+    markers.count(marker) == 2 &&
     markers.count(Square::INITIAL_MARKER) == 1 
   end
 
-  def defend_this_line?(squares)
-    markers = squares.collect(&:marker)
-    markers.count(TTTGame::HUMAN_MARKER) == 2 &&
-    markers.count(Square::INITIAL_MARKER) == 1
-  end
-
-  def unmarked_square_from_line(squares)
-    squares.select(&:unmarked?).first
+  def key_of_unmarked_square_from_line(line)
+    @squares.select do |sq_num, square| 
+      line.include?(sq_num) && square.unmarked?
+    end.keys.first
   end
 end
 
@@ -265,23 +250,15 @@ class TTTGame
   end
 
   def computer_moves
-    if board.possible_win_square
-      offensive_move
-    elsif board.at_risk_square
-      defensive_move
+    if !!board.at_risk_square(COMPUTER_MARKER)
+      board[board.at_risk_square(COMPUTER_MARKER)] = COMPUTER_MARKER
+    elsif !!board.at_risk_square(HUMAN_MARKER)
+      board[board.at_risk_square(HUMAN_MARKER)] = COMPUTER_MARKER
     elsif board.squares[5].unmarked?
-      board[5] = computer.marker
+      board[5] = COMPUTER_MARKER
     else
-      board[board.unmarked_keys.sample] = computer.marker
+      board[board.unmarked_keys.sample] = COMPUTER_MARKER
     end
-  end
-
-  def offensive_move
-    board.possible_win_square.marker = computer.marker
-  end
-
-  def defensive_move
-    board.at_risk_square.marker = computer.marker
   end
 
   def current_player_moves
