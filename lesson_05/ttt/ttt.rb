@@ -124,12 +124,27 @@ class Player
 end
 
 class Human < Player
+  attr_reader :name
+
   def initialize
+    @name = ask_human_name
     @marker = ask_human_marker
     @score = 0
   end
 
   private
+
+  def ask_human_name
+    answer = nil
+    loop do
+      puts "What's your name?"
+      answer = gets.chomp.capitalize
+      break unless answer.empty?
+      puts "Please enter a name."
+    end
+
+    answer
+  end
 
   def ask_human_marker
     answer = nil
@@ -144,6 +159,17 @@ class Human < Player
   end
 end
 
+class Computer < Player
+  COMPUTER_NAMES = ['Deep Thought', 'Hal', 'Skynet', 'C3PO', 'R2D2', 'Robbie']
+
+  attr_reader :name
+
+  def initialize(marker)
+    super
+    @name = COMPUTER_NAMES.sample
+  end
+end
+
 class TTTGame
   COMPUTER_MARKER = "O"
   MAX_SCORE = 5
@@ -151,9 +177,10 @@ class TTTGame
   attr_reader :board, :human, :computer
 
   def initialize
+    clear
     @board = Board.new
     @human = Human.new
-    @computer = Player.new(COMPUTER_MARKER)
+    @computer = Computer.new(COMPUTER_MARKER)
   end
 
   def play
@@ -216,15 +243,21 @@ class TTTGame
   end
 
   def display_welcome_message
+    puts "Hi #{human.name}!"
     puts "Welcome to Tic Tac Toe!"
+    puts ""
+    puts "The rules are simple, get three #{human.marker}'s in a row"
+    puts "either vertically, horizontally, or diagonally."
+    puts "But beware, #{computer.name} will be trying to do the same."
+    puts "Block them wherever you can! Good luck!"
     puts ""
   end
 
   def display_winner
     if human.score > computer.score
-      puts "You have won the tournament!"
+      puts "#{human.name} has won the tournament!"
     else
-      puts "The computer has won. You lost the tournament."
+      puts "#{computer.name} has won. I'm sorry, #{human.name}, you lost the tournament."
     end
   end
 
@@ -242,7 +275,7 @@ class TTTGame
   end
 
   def display_board
-    puts "You're a #{human.marker}. Computer is a #{computer.marker}."
+    puts "#{human.name} is: #{human.marker}. #{computer.name} is: #{computer.marker}."
     puts ""
     board.draw
     puts ""
@@ -296,15 +329,15 @@ class TTTGame
     case board.winning_marker
     when human.marker
       human.score += 1
-      puts "You won!"
+      puts "#{human.name} won!"
     when computer.marker
       computer.score += 1
-      puts "Computer won!"
+      puts "#{computer.name} won!"
     else
       puts "It's a tie!"
     end
 
-    puts "The score is now: You - #{human.score} Computer - #{computer.score}"
+    puts "The score is now: #{human.name} - #{human.score} #{computer.name} - #{computer.score}"
   end
 
   def tournament_winner?
