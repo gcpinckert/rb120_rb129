@@ -111,8 +111,7 @@ class Square
 end
 
 class Player
-  attr_reader :marker
-  attr_accessor :score
+  attr_accessor :marker, :score
 
   def initialize(marker)
     @marker = marker
@@ -124,8 +123,28 @@ class Player
   end
 end
 
+class Human < Player
+  def initialize
+    @marker = ask_human_marker
+    @score = 0
+  end
+
+  private
+
+  def ask_human_marker
+    answer = nil
+    loop do
+      puts "Choose a letter to be your marker. Must not be 'O'."
+      answer = gets.chomp.upcase
+      break if ('A'..'Z').include?(answer) && answer != 'O'
+      puts "Please choose a letter A-Z. Must not be 'O'."
+    end
+
+    answer
+  end
+end
+
 class TTTGame
-  HUMAN_MARKER = "X"
   COMPUTER_MARKER = "O"
   MAX_SCORE = 5
 
@@ -133,7 +152,7 @@ class TTTGame
 
   def initialize
     @board = Board.new
-    @human = Player.new(HUMAN_MARKER)
+    @human = Human.new
     @computer = Player.new(COMPUTER_MARKER)
   end
 
@@ -171,9 +190,9 @@ class TTTGame
 
   def set_first_player
     case ask_first_player
-    when 'h' then @current_marker = HUMAN_MARKER
+    when 'h' then @current_marker = human.marker
     when 'c' then @current_marker = COMPUTER_MARKER
-    when 'r' then @current_marker = [HUMAN_MARKER, COMPUTER_MARKER].sample
+    when 'r' then @current_marker = [human.marker, COMPUTER_MARKER].sample
     end
   end
 
@@ -219,7 +238,7 @@ class TTTGame
   end
 
   def human_turn?
-    @current_marker == HUMAN_MARKER
+    @current_marker == human.marker
   end
 
   def display_board
@@ -252,8 +271,8 @@ class TTTGame
   def computer_moves
     if !!board.at_risk_square(COMPUTER_MARKER)
       board[board.at_risk_square(COMPUTER_MARKER)] = COMPUTER_MARKER
-    elsif !!board.at_risk_square(HUMAN_MARKER)
-      board[board.at_risk_square(HUMAN_MARKER)] = COMPUTER_MARKER
+    elsif !!board.at_risk_square(human.marker)
+      board[board.at_risk_square(human.marker)] = COMPUTER_MARKER
     elsif board.squares[5].unmarked?
       board[5] = COMPUTER_MARKER
     else
@@ -267,7 +286,7 @@ class TTTGame
       @current_marker = COMPUTER_MARKER
     else
       computer_moves
-      @current_marker = HUMAN_MARKER
+      @current_marker = human.marker
     end
   end
 
