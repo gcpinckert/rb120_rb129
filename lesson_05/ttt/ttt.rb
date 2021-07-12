@@ -1,3 +1,60 @@
+require 'io/console'
+
+module Printable
+  CSI = "\e["
+  ROWS, COLUMNS = IO.console.winsize
+  BORDER_LINE = '#' * COLUMNS
+  INSIDE_WIDTH = COLUMNS - 4
+  LEFT_MARGIN = (INSIDE_WIDTH / 3)
+  HORIZONTAL_LINE = "###{' ' * INSIDE_WIDTH}##"
+
+  def clear
+    system("clear") || system("cls")
+  end
+
+  def clear_with_border
+    clear
+    print_border
+  end
+
+  def print_border
+    $stdout.write "#{CSI}0;1H"
+    2.times { puts BORDER_LINE }
+    (ROWS - 5).times { puts HORIZONTAL_LINE }
+    2.times { puts BORDER_LINE }
+  end
+
+  def print_banner(message)
+    $stdout.write "#{CSI}4;1H"
+    message.each do |line|
+      puts "###{line.center(INSIDE_WIDTH)}##"
+    end
+  end
+
+  def print_message(message)
+    message.each do |line|
+      puts "###{line.center(INSIDE_WIDTH)}##"
+    end
+  end
+
+  def print_message_input(message)
+    print_message(message)
+    set_to_left_margin
+  end
+
+  def set_to_left_margin
+    $stdout.write "#{CSI}#{LEFT_MARGIN}C"
+  end
+
+  def set_to_top
+    $stdout.write "#{CSI}4;1H"
+  end
+
+  def set_to_bottom
+    $stdout.write "#{CSI}#{ROWS};1H"
+  end
+end
+
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # cols
@@ -55,24 +112,24 @@ class Board
     (1..9).each { |key| @squares[key] = Square.new }
   end
 
-  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-  def draw
-    puts " (1)   (2)   (3)"
-    puts "     |     |"
-    puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts " (4)   (5)   (6)"
-    puts "     |     |"
-    puts "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}"
-    puts "     |     |"
-    puts "-----+-----+-----"
-    puts " (7)   (8)   (9)"
-    puts "     |     |"
-    puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
-    puts "     |     |"
+  # rubocop:disable Metrics/MethodLength
+  def lines
+    [" (1)   (2)   (3) ",
+     "     |     |     ",
+     "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}  ",
+     "     |     |     ",
+     "-----+-----+-----",
+     " (4)   (5)   (6) ",
+     "     |     |     ",
+     "  #{@squares[4]}  |  #{@squares[5]}  |  #{@squares[6]}  ",
+     "     |     |     ",
+     "-----+-----+-----",
+     " (7)   (8)   (9) ",
+     "     |     |     ",
+     "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}  ",
+     "     |     |     "]
   end
-  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
+  # rubocop:enable Metrics/MethodLength
 
   private
 
@@ -131,6 +188,8 @@ class Player
 end
 
 class Human < Player
+  include Printable
+
   attr_reader :name
 
   def initialize
@@ -144,10 +203,11 @@ class Human < Player
   def ask_human_name
     answer = nil
     loop do
-      puts "What's your name?"
+      set_to_top
+      print_message_input ["What's your name?"]
       answer = gets.chomp.capitalize
       break unless answer.empty?
-      puts "Please enter a name."
+      print_message ["Please enter a name."]
     end
 
     answer
@@ -156,10 +216,10 @@ class Human < Player
   def ask_human_marker
     answer = nil
     loop do
-      puts "Choose a letter to be your marker. Must not be 'O'."
+      print_message_input ["Choose a letter to be your marker. Cannot be 'O'."]
       answer = gets.chomp.upcase
       break if ('A'..'Z').include?(answer) && answer != 'O'
-      puts "Please choose a letter A-Z. Must not be 'O'."
+      print_message ["Please choose a letter A-Z. Must not be 'O'."]
     end
 
     answer
@@ -178,39 +238,38 @@ class Computer < Player
 end
 
 class TTTGame
+  include Printable
+
   COMPUTER_MARKER = "O"
   MAX_SCORE = 5
 
   attr_reader :board, :human, :computer
 
   def initialize
-    clear
+    clear_with_border
     @board = Board.new
     @human = Human.new
     @computer = Computer.new(COMPUTER_MARKER)
   end
 
   def play
-    clear
+    clear_with_border
     display_welcome_message
-    set_up_game
+    set_first_player
     play_tournament
     display_goodbye_message
   end
 
   private
 
-  def set_up_game
-    set_first_player
-  end
-
   def ask_first_player
     answer = nil
     loop do
-      puts "Who should go first (h)uman, (c)omputer, or (r)andom?"
+      print_message_input ["Who should go first human, computer, or random?",
+                           "Enter 'h', 'c', or 'r'."]
       answer = gets.chomp.downcase
       break if ['h', 'c', 'r'].include?(answer)
-      puts "Please enter 'h', 'c', or 'r'"
+      print_message ["Please enter 'h', 'c', or 'r'"]
     end
 
     answer
@@ -250,20 +309,17 @@ class TTTGame
     loop do
       current_player_moves
       break if board.someone_won? || board.full?
-      clear_screen_and_display_board if human_turn?
+      clear_with_border_screen_and_display_board if human_turn?
     end
   end
 
   def display_welcome_message
-    puts "Hi #{human.name}!"
-    puts ""
-    puts "Welcome to Tic Tac Toe!"
-    puts ""
-    puts "The rules are simple, get three #{human.marker}'s in a row"
-    puts "either vertically, horizontally, or diagonally."
-    puts "But beware, #{computer.name} will be trying to do the same."
-    puts "Block them wherever you can! Good luck!"
-    puts ""
+    welcome_message = ["Hi #{human.name}!", "", "Welcome to Tic Tac Toe!", "",
+                       "Your goal: get three #{human.marker}'s in a row",
+                       "either vertically, horizontally, or diagonally.",
+                       "Beware, #{computer.name} is trying to do the same.",
+                       "Block them wherever you can! Good luck!", ""]
+    print_banner(welcome_message)
   end
 
   def display_winner
@@ -275,12 +331,11 @@ class TTTGame
   end
 
   def display_goodbye_message
-    puts ""
-    puts "Thanks for playing Tic Tac Toe! Goodbye!"
+    print_banner ["", "Thanks for playing Tic Tac Toe! Goodbye!"]
   end
 
-  def clear_screen_and_display_board
-    clear
+  def clear_with_border_screen_and_display_board
+    clear_with_border
     display_board
   end
 
@@ -290,23 +345,21 @@ class TTTGame
 
   # rubocop:disable Metrics/AbcSize
   def display_board
-    puts ""
-    puts "#{human.name} - #{human.marker} " \
-      "#{computer.name} - #{computer.marker}"
-    puts "#{human.name} - #{human.score} #{computer.name} - #{computer.score}"
-    puts ""
-    board.draw
-    puts ""
+    headings = ["", "Markers: #{human.name} - #{human.marker}" \
+                " #{computer.name} - #{computer.marker}",
+                "Score: #{human.name} - #{human.score} " \
+                "#{computer.name} - #{computer.score}", ""]
+    print_banner(headings + board.lines + [""])
   end
   # rubocop:enable Metrics/AbcSize
 
   def human_moves
-    puts "Choose a square (#{joinor(board.unmarked_keys)}): "
+    print_message_input ["Choose a square (#{joinor(board.unmarked_keys)}): "]
     square = nil
     loop do
       square = gets.chomp.to_i
       break if board.unmarked_keys.include?(square)
-      puts "Sorry, that's not a valid choice."
+      print_message ["Sorry, that's not a valid choice."]
     end
 
     board[square] = human.marker
@@ -367,19 +420,19 @@ class TTTGame
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def display_result
-    clear_screen_and_display_board
+    clear_with_border_screen_and_display_board
 
     case board.winning_marker
     when human.marker
-      puts "#{human.name} won!"
+      print_message ["#{human.name} won!"]
     when computer.marker
-      puts "#{computer.name} won!"
+      print_message ["#{computer.name} won!"]
     else
-      puts "It's a tie!"
+      print_message ["It's a tie!"]
     end
 
-    puts "The score is now: #{human.name} - #{human.score}" \
-      " #{computer.name} - #{computer.score}"
+    print_message ["", "The score is now: #{human.name} - #{human.score}" \
+      " #{computer.name} - #{computer.score}", ""]
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
@@ -390,23 +443,19 @@ class TTTGame
   def play_again?
     answer = nil
     loop do
-      puts "Would you like to play again? (y/n)"
+      print_message_input ["Would you like to play again? (y/n)"]
       answer = gets.chomp.downcase
       break if %w(y n).include? answer
-      puts "Sorry, must be y or n"
+      print_message ["Sorry, must be y or n"]
     end
 
     answer == 'y'
   end
 
-  def clear
-    system "clear"
-  end
-
   def reset
     board.reset
     @current_marker = set_first_player
-    clear
+    clear_with_border
   end
 
   def reset_scores
@@ -415,7 +464,11 @@ class TTTGame
   end
 
   def quit
+    clear_with_border
     display_goodbye_message
+    set_to_bottom
+    sleep(2)
+    clear
     exit
   end
 end
