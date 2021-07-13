@@ -72,11 +72,11 @@ class Card
 end
 
 class Participant
-  attr_accessor :hand, :total, :name
+  attr_accessor :hand, :total, :name, :score
 
   def initialize
     @hand = []
-    @total = 0
+    @score = 0
     set_name
   end
 
@@ -161,6 +161,7 @@ class TwentyOneGame
   include Printable
 
   POINTS_UPPER_LIMIT = 21
+  ROUNDS_TO_WIN = 5
 
   attr_accessor :deck
   attr_reader :dealer, :player
@@ -175,14 +176,10 @@ class TwentyOneGame
   def play
     display_welcome
     loop do
-      clear
-      deal_initial_cards
-      show_cards
-      player_turn
-      dealer_turn unless player.busted?
-      show_result
+      play_single_round
+      display_grand_winner
       break unless play_again?
-      reset
+      reset_tournament
     end
     display_goodbye
   end
@@ -204,8 +201,24 @@ class TwentyOneGame
          " the dealer wins!"
     puts ""
     puts "Your dealer today will be #{dealer.name}."
+    puts "The first player to win #{ROUNDS_TO_WIN} games wins!"
     puts "Hit enter to begin. Good luck!"
     start = gets.chomp
+  end
+
+  def play_single_round
+    loop do
+      clear
+      deal_initial_cards
+      show_cards
+      player_turn
+      dealer_turn unless player.busted?
+      update_score
+      show_result
+      break if someone_won_tournament?
+      break unless play_again?
+      reset
+    end
   end
 
   def deal_initial_cards
@@ -216,6 +229,9 @@ class TwentyOneGame
   end
 
   def show_cards
+    puts "==========> SCORE <=========="
+    puts "#{player.name} - #{player.score} #{dealer.name} - #{dealer.score}"
+    puts ""
     dealer.display_hand
     player.display_hand
   end
@@ -243,6 +259,14 @@ class TwentyOneGame
     end
   end
 
+  def update_score
+    if player.busted? || (dealer.total > player.total && !dealer.busted?)
+      dealer.score += 1
+    elsif dealer.busted? || (player.total > dealer.total && !player.busted?)
+      player.score += 1
+    end
+  end
+
   def show_result
     if player.busted? || dealer.busted?
       show_busted_result
@@ -251,6 +275,8 @@ class TwentyOneGame
       puts "#{dealer.name} has #{dealer.total} #{player.name} has #{player.total}"
       display_winner
     end
+    puts "The score is now: #{player.name} - #{player.score} " \
+         "#{dealer.name} - #{dealer.score}"
   end
 
   def display_winner
@@ -258,6 +284,8 @@ class TwentyOneGame
       puts "#{player.name} wins!"
     elsif dealer.total > player.total && !dealer.busted?
       puts "#{dealer.name} wins!"
+    elsif player.total == dealer.total
+      puts "It's a tie!"
     end
   end
 
@@ -266,6 +294,18 @@ class TwentyOneGame
       puts "#{player.name} busted! #{dealer.name} wins!"
     else
       puts "#{dealer.name} busted! #{player.name} wins!"
+    end
+  end
+
+  def someone_won_tournament?
+    player.score >= ROUNDS_TO_WIN || dealer.score >= ROUNDS_TO_WIN
+  end
+
+  def display_grand_winner
+    if player.score > dealer.score
+      puts "#{player.name} is the grand winner!!"
+    else
+      puts "#{dealer.name} is the grand winner!!"
     end
   end
 
@@ -285,6 +325,12 @@ class TwentyOneGame
     self.deck = Deck.new
     player.hand = []
     dealer.hand = []
+  end
+
+  def reset_tournament
+    reset
+    player.score = 0
+    dealer.score = 0
   end
 
   def display_goodbye
