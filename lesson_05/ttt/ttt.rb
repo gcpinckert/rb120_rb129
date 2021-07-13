@@ -358,8 +358,11 @@ class TTTGame
     print_message_input ["Choose a square (#{joinor(board.unmarked_keys)}): "]
     square = nil
     loop do
-      square = gets.chomp.to_i
-      break if board.unmarked_keys.include?(square)
+      square = gets.chomp
+      if board.unmarked_keys.include?(square.to_i) && square.to_i.to_s == square
+        square = square.to_i
+        break
+      end
       print_message_input ["Sorry, that's not a valid choice."]
     end
 
