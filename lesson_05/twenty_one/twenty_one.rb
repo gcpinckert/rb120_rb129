@@ -61,8 +61,10 @@ class Card
                  "|/////////|",
                  "|\\\\\\\\\\\\\\\\\\|",
                  "|/////////|",
+                 "|\\\\\\\\\\\\\\\\\\|",
+                 "|/////////|",
                  "|\\\\\\\\\\\\\\\\\\|"]
-  @@card_rows = [[], [], [], [], [], []]
+  @@card_rows = [[], [], [], [], [], [], [], []]
 
   attr_reader :suit, :value
   attr_accessor :points
@@ -78,12 +80,7 @@ class Card
   end
 
   def draw_hidden
-    @@card_rows[0] << HIDDEN_CARD[0]
-    @@card_rows[1] << HIDDEN_CARD[1]
-    @@card_rows[2] << HIDDEN_CARD[2]
-    @@card_rows[3] << HIDDEN_CARD[3]
-    @@card_rows[4] << HIDDEN_CARD[4]
-    @@card_rows[5] << HIDDEN_CARD[5]
+    (0..7).each { |index| @@card_rows[index] << HIDDEN_CARD[index] }
   end
 
   # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
@@ -92,21 +89,25 @@ class Card
     if value == '10'
       @@card_rows[1] << "#{value}        |"
       @@card_rows[2] << "|         |"
-      @@card_rows[3] << "|    #{suit_symbol}    |"
-      @@card_rows[4] << "|         |"
-      @@card_rows[5] << "|________#{value}"
+      @@card_rows[3] << "|         |"
+      @@card_rows[4] << "|    #{suit_symbol}    |"
+      @@card_rows[5] << "|         |"
+      @@card_rows[6] << "|         |"
+      @@card_rows[7] << "|________#{value}"
     else
       @@card_rows[1] << "|#{value}        |"
       @@card_rows[2] << "|         |"
-      @@card_rows[3] << "|    #{suit_symbol}    |"
-      @@card_rows[4] << "|         |"
-      @@card_rows[5] << "|________#{value}|"
+      @@card_rows[3] << "|         |"
+      @@card_rows[4] << "|    #{suit_symbol}    |"
+      @@card_rows[5] << "|         |"
+      @@card_rows[6] << "|         |"
+      @@card_rows[7] << "|________#{value}|"
     end
   end
   # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def self.reset_card_rows
-    @@card_rows = [[], [], [], [], [], []]
+    @@card_rows = [[], [], [], [], [], [], [], []]
   end
 
   def self.draw_full_hand
