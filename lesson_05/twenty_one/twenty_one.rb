@@ -1,6 +1,7 @@
 require 'io/console'
 
 module Printable
+  SUIT_SYMBOLS = "\u2663 \u2660 \u2665 \u2666"
   CSI = "\e["
   @@rows, @@columns = IO.console.winsize
 
@@ -19,6 +20,7 @@ module Printable
   def expand_window
     print_centered("Please expand the terminal window for optimal" \
          " experience")
+    set_margin
     loop do
       @@rows, @@columns = IO.console.winsize
       break if @@rows >= 50 && @@columns >= 120
@@ -84,6 +86,7 @@ class Card
     @@card_rows[5] << HIDDEN_CARD[5]
   end
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def draw_visible
     @@card_rows[0] << " _________ "
     if value == '10'
@@ -100,6 +103,7 @@ class Card
       @@card_rows[5] << "|________#{value}|"
     end
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
   def self.reset_card_rows
     @@card_rows = [[], [], [], [], [], []]
@@ -139,7 +143,6 @@ class Card
     else          suit
     end
   end
-
 end
 
 class Participant
@@ -202,7 +205,7 @@ end
 class Player < Participant
   include Printable
 
-  def get_move
+  def ask_move
     answer = nil
     print_centered "Would you like to (h)it or (s)tay?"
     set_margin
@@ -229,9 +232,7 @@ class Player < Participant
 
   def display_hand
     print_centered "==========> #{name} <=========="
-    hand.each do |card|
-      card.draw_visible
-    end
+    hand.each(&:draw_visible)
     Card.draw_full_hand
     puts ""
     print_centered "Current Total: #{total}"
@@ -268,9 +269,10 @@ class TwentyOneGame
 
   private
 
+  # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
   def display_welcome
     clear
-    print_centered "\u2663 \u2660 \u2665 \u2666"
+    print_centered SUIT_SYMBOLS
     puts ""
     print_centered "Hi #{player.name}!"
     print_centered "Welcome to #{POINTS_UPPER_LIMIT}!"
@@ -290,26 +292,33 @@ class TwentyOneGame
     print_centered "Your dealer today will be #{dealer.name}."
     print_centered "The first player to win #{ROUNDS_TO_WIN} games wins!"
     puts ""
-    print_centered "\u2663 \u2660 \u2665 \u2666"
+    print_centered SUIT_SYMBOLS
     puts ""
     print_centered "Hit enter to begin. Good luck!"
     set_margin
-    start = gets.chomp
+    gets.chomp
   end
+  # rubocop:enable Metrics/AbcSize, Metrics/MethodLength
 
+  # rubocop:disable Metrics/MethodLength
   def play_single_round
     loop do
       clear
       deal_initial_cards
       show_cards
-      player_turn
-      dealer_turn unless player.busted?
+      turn_cycle
       update_score
       show_result
       break if someone_won_tournament?
       quit_early unless play_again?
       reset
     end
+  end
+  # rubocop:enable Metrics/MethodLength
+
+  def turn_cycle
+    player_turn
+    dealer_turn unless player.busted?
   end
 
   def deal_initial_cards
@@ -322,7 +331,8 @@ class TwentyOneGame
   def show_cards
     print_centered "==========> SCORE <=========="
     puts ""
-    print_centered "#{player.name} - #{player.score} #{dealer.name} - #{dealer.score}"
+    print_centered "#{player.name} - #{player.score}" \
+                   " #{dealer.name} - #{dealer.score}"
     puts ""
     dealer.display_hand
     player.display_hand
@@ -332,7 +342,7 @@ class TwentyOneGame
   def player_turn
     loop do
       break if player.busted?
-      case player.get_move
+      case player.ask_move
       when 'h' then player.hit(deck.deal_single_card!)
       when 's' then break
       end
@@ -340,7 +350,6 @@ class TwentyOneGame
       show_cards
     end
     print_centered "BUST!!" if player.busted?
-    puts ""
   end
 
   def dealer_turn
@@ -351,42 +360,62 @@ class TwentyOneGame
       sleep(1)
       if dealer.busted?
         print_centered "#{dealer.name.upcase} BUSTS!!"
-        puts ""
         break
       end
     end
   end
 
+  # rubocop:disable Metrics/MethodLength
+  def find_winner
+    if player.busted?
+      dealer
+    elsif dealer.busted?
+      player
+    elsif dealer.total > player.total
+      dealer
+    elsif player.total > dealer.total
+      player
+    else
+      :tie
+    end
+  end
+  # rubocop:enable Metrics/MethodLength
+
   def update_score
-    if player.busted? || (dealer.total > player.total && !dealer.busted?)
-      dealer.score += 1
-    elsif dealer.busted? || (player.total > dealer.total && !player.busted?)
-      player.score += 1
+    case find_winner
+    when dealer then dealer.score += 1
+    when player then player.score += 1
     end
   end
 
+  # rubocop:disable Metrics/AbcSize
   def show_result
+    puts ""
     if player.busted? || dealer.busted?
       show_busted_result
     else
-      print_centered "Both players have stayed."
-      puts ""
-      print_centered "#{dealer.name} has #{dealer.total} #{player.name} has #{player.total}"
-      display_winner
+      show_stay_result
     end
     puts ""
     print_centered "The score is now: #{player.name} - #{player.score} " \
          "#{dealer.name} - #{dealer.score}"
     puts ""
   end
+  # rubocop:enable Metrics/AbcSize
+
+  def show_stay_result
+    print_centered "Both players have stayed."
+    puts ""
+    print_centered "#{dealer.name} has #{dealer.total} " \
+                   "#{player.name} has #{player.total}"
+    display_winner
+  end
 
   def display_winner
-    if player.total > dealer.total && !player.busted?
-      print_centered "#{player.name} wins!"
-    elsif dealer.total > player.total && !dealer.busted?
-      print_centered "#{dealer.name} wins!"
-    elsif player.total == dealer.total
-      print_centered "It's a tie!"
+    case find_winner
+    when player then print_centered "#{player.name} wins!"
+    when dealer then print_centered "#{dealer.name} wins!"
+    else             print_centered "It's a tie!"
     end
   end
 
