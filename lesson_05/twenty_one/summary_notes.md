@@ -56,7 +56,7 @@ Note: busts is not an action being performed. In fact, it represents a state, _b
 
 Potential Classes
 
-```
+```md
 Player
 - hit
 - stay

@@ -1,6 +1,33 @@
+require 'io/console'
+
 module Printable
+  CSI = "\e["
+  @@rows, @@columns = IO.console.winsize
+
   def clear
     system("clear") || system("cls")
+  end
+
+  def window_too_small?
+    @@rows < 50 || @@columns < 120
+  end
+
+  def print_centered(message)
+    puts message.center(@@columns)
+  end
+
+  def expand_window
+    print_centered("Please expand the terminal window for optimal" \
+         " experience")
+    loop do
+      @@rows, @@columns = IO.console.winsize
+      break if @@rows >= 50 && @@columns >= 120
+    end
+    clear
+  end
+
+  def set_margin
+    $stdout.write "#{CSI}#{@@columns / 2}C"
   end
 end
 
@@ -25,6 +52,15 @@ class Deck
 end
 
 class Card
+  extend Printable
+
+  HIDDEN_CARD = [" _________ ",
+                 "|\\\\\\\\\\\\\\\\\\|",
+                 "|/////////|",
+                 "|\\\\\\\\\\\\\\\\\\|",
+                 "|/////////|",
+                 "|\\\\\\\\\\\\\\\\\\|"]
+  @@card_rows = [[], [], [], [], [], []]
 
   attr_reader :suit, :value
   attr_accessor :points
@@ -37,6 +73,41 @@ class Card
 
   def to_s
     "#{value} #{suit_symbol}"
+  end
+
+  def draw_hidden
+    @@card_rows[0] << HIDDEN_CARD[0]
+    @@card_rows[1] << HIDDEN_CARD[1]
+    @@card_rows[2] << HIDDEN_CARD[2]
+    @@card_rows[3] << HIDDEN_CARD[3]
+    @@card_rows[4] << HIDDEN_CARD[4]
+    @@card_rows[5] << HIDDEN_CARD[5]
+  end
+
+  def draw_visible
+    @@card_rows[0] << " _________ "
+    if value == '10'
+      @@card_rows[1] << "#{value}        |"
+      @@card_rows[2] << "|         |"
+      @@card_rows[3] << "|    #{suit_symbol}    |"
+      @@card_rows[4] << "|         |"
+      @@card_rows[5] << "|________#{value}"
+    else
+      @@card_rows[1] << "|#{value}        |"
+      @@card_rows[2] << "|         |"
+      @@card_rows[3] << "|    #{suit_symbol}    |"
+      @@card_rows[4] << "|         |"
+      @@card_rows[5] << "|________#{value}|"
+    end
+  end
+
+  def self.reset_card_rows
+    @@card_rows = [[], [], [], [], [], []]
+  end
+
+  def self.draw_full_hand
+    @@card_rows.each { |row| print_centered(row.join(' ')) }
+    Card.reset_card_rows
   end
 
   private
@@ -105,6 +176,8 @@ class Participant
 end
 
 class Dealer < Participant
+  include Printable
+
   DEALER_STAYS = 17
   DEALERS = ['Hal', 'Deep Thought', 'Skynet', 'Robbie', 'R2D2', 'C3PO']
 
@@ -113,47 +186,55 @@ class Dealer < Participant
   end
 
   def display_hand
-    puts "==========> #{name} <=========="
+    print_centered "==========> #{name} <=========="
     hand.each_with_index do |card, index|
       if index == 0
-        puts "||#{card}||"
+        card.draw_hidden
       else
-        puts "|||||||"
+        card.draw_visible
       end
     end
+    Card.draw_full_hand
     puts ""
   end
 end
 
 class Player < Participant
+  include Printable
+
   def get_move
     answer = nil
+    print_centered "Would you like to (h)it or (s)tay?"
+    set_margin
     loop do
-      puts "Would you like to (h)it or (s)tay?"
       answer = gets.chomp.downcase
       break if %w(h s).include? answer
-      puts "Please enter 'h' or 's'."
+      print_centered "Please enter 'h' or 's'."
+      set_margin
     end
 
     answer
   end
 
   def set_name
+    print_centered "What's your name? "
+    set_margin
     loop do
-      puts "What's your name? "
       self.name = gets.chomp
       break if !name.empty?
-      puts "Please enter a name."
+      print_centered "Please enter a name."
+      set_margin
     end
   end
 
   def display_hand
-    puts "==========> #{name} <=========="
+    print_centered "==========> #{name} <=========="
     hand.each do |card|
-      puts "||#{card}||"
+      card.draw_visible
     end
+    Card.draw_full_hand
     puts ""
-    puts "Current Total: #{total}"
+    print_centered "Current Total: #{total}"
   end
 end
 
@@ -168,6 +249,7 @@ class TwentyOneGame
 
   def initialize
     clear
+    expand_window if window_too_small?
     @deck = Deck.new
     @dealer = Dealer.new
     @player = Player.new
@@ -187,22 +269,31 @@ class TwentyOneGame
   private
 
   def display_welcome
-    puts "Hi #{player.name}! Welcome to #{POINTS_UPPER_LIMIT}!"
-    puts "Get as close to #{POINTS_UPPER_LIMIT} as possible, " \
+    clear
+    print_centered "\u2663 \u2660 \u2665 \u2666"
+    puts ""
+    print_centered "Hi #{player.name}!"
+    print_centered "Welcome to #{POINTS_UPPER_LIMIT}!"
+    puts ""
+    print_centered "Get as close to #{POINTS_UPPER_LIMIT} as possible, " \
          "without going over."
     puts ""
-    puts "Cards 2-10 are each worth their face value."
-    puts "Jacks, Queens, and Kings are all worth 10."
-    puts "An Ace can be worth either 11 or 1."
+    print_centered "Cards 2-10 are each worth their face value."
+    print_centered "Jacks, Queens, and Kings are all worth 10."
+    print_centered "An Ace can be worth either 11 or 1."
     puts ""
-    puts "Tell the dealer 'hit' to get another card."
-    puts "Choose to 'stay' to try your luck with what you've got."
-    puts "If you go over #{POINTS_UPPER_LIMIT} you 'bust' and" \
+    print_centered "Tell the dealer 'hit' to get another card."
+    print_centered "Choose to 'stay' to try your luck with what you've got."
+    print_centered "If you go over #{POINTS_UPPER_LIMIT} you 'bust' and" \
          " the dealer wins!"
     puts ""
-    puts "Your dealer today will be #{dealer.name}."
-    puts "The first player to win #{ROUNDS_TO_WIN} games wins!"
-    puts "Hit enter to begin. Good luck!"
+    print_centered "Your dealer today will be #{dealer.name}."
+    print_centered "The first player to win #{ROUNDS_TO_WIN} games wins!"
+    puts ""
+    print_centered "\u2663 \u2660 \u2665 \u2666"
+    puts ""
+    print_centered "Hit enter to begin. Good luck!"
+    set_margin
     start = gets.chomp
   end
 
@@ -216,7 +307,7 @@ class TwentyOneGame
       update_score
       show_result
       break if someone_won_tournament?
-      break unless play_again?
+      quit_early unless play_again?
       reset
     end
   end
@@ -229,11 +320,13 @@ class TwentyOneGame
   end
 
   def show_cards
-    puts "==========> SCORE <=========="
-    puts "#{player.name} - #{player.score} #{dealer.name} - #{dealer.score}"
+    print_centered "==========> SCORE <=========="
+    puts ""
+    print_centered "#{player.name} - #{player.score} #{dealer.name} - #{dealer.score}"
     puts ""
     dealer.display_hand
     player.display_hand
+    puts ""
   end
 
   def player_turn
@@ -246,14 +339,19 @@ class TwentyOneGame
       clear
       show_cards
     end
-    puts "BUST!!" if player.busted?
+    print_centered "BUST!!" if player.busted?
+    puts ""
   end
 
   def dealer_turn
     while dealer.total < Dealer::DEALER_STAYS
       dealer.hit(deck.deal_single_card!)
+      clear
+      show_cards
+      sleep(1)
       if dealer.busted?
-        puts "#{dealer.name.upcase} BUSTS!!"
+        print_centered "#{dealer.name.upcase} BUSTS!!"
+        puts ""
         break
       end
     end
@@ -271,29 +369,32 @@ class TwentyOneGame
     if player.busted? || dealer.busted?
       show_busted_result
     else
-      puts "Both players have stayed."
-      puts "#{dealer.name} has #{dealer.total} #{player.name} has #{player.total}"
+      print_centered "Both players have stayed."
+      puts ""
+      print_centered "#{dealer.name} has #{dealer.total} #{player.name} has #{player.total}"
       display_winner
     end
-    puts "The score is now: #{player.name} - #{player.score} " \
+    puts ""
+    print_centered "The score is now: #{player.name} - #{player.score} " \
          "#{dealer.name} - #{dealer.score}"
+    puts ""
   end
 
   def display_winner
     if player.total > dealer.total && !player.busted?
-      puts "#{player.name} wins!"
+      print_centered "#{player.name} wins!"
     elsif dealer.total > player.total && !dealer.busted?
-      puts "#{dealer.name} wins!"
+      print_centered "#{dealer.name} wins!"
     elsif player.total == dealer.total
-      puts "It's a tie!"
+      print_centered "It's a tie!"
     end
   end
 
   def show_busted_result
     if player.busted?
-      puts "#{player.name} busted! #{dealer.name} wins!"
+      print_centered "#{player.name} busted! #{dealer.name} wins!"
     else
-      puts "#{dealer.name} busted! #{player.name} wins!"
+      print_centered "#{dealer.name} busted! #{player.name} wins!"
     end
   end
 
@@ -302,20 +403,24 @@ class TwentyOneGame
   end
 
   def display_grand_winner
+    puts ""
     if player.score > dealer.score
-      puts "#{player.name} is the grand winner!!"
+      print_centered "#{player.name} is the grand winner!!"
     else
-      puts "#{dealer.name} is the grand winner!!"
+      print_centered "#{dealer.name} is the grand winner!!"
     end
+    puts ""
   end
 
   def play_again?
     answer = nil
-    puts "Would you like to play again? (y/n)"
+    print_centered "Would you like to play again? (y/n)"
+    set_margin
     loop do
       answer = gets.chomp.downcase
       break if %w(y n).include? answer
-      puts "Please enter 'y' or 'n'"
+      print_centered "Please enter 'y' or 'n'"
+      set_margin
     end
 
     answer == 'y'
@@ -334,7 +439,16 @@ class TwentyOneGame
   end
 
   def display_goodbye
-    puts "Thank you for playing #{POINTS_UPPER_LIMIT}! Goodbye!"
+    print_centered "Thank you for playing #{POINTS_UPPER_LIMIT}! Goodbye!"
+    sleep(2)
+    clear
+  end
+
+  def quit_early
+    display_goodbye
+    sleep(2)
+    clear
+    exit
   end
 end
 
