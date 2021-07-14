@@ -93,3 +93,8 @@
     - [Fix the Program - Expander](./exercises/easy_2/08.rb)
     - [Moving](./exercises/easy_2/09.rb)
     - [Nobility](./exercises/easy_2/10.rb)
+  - [Medium 1](./exercises/medium_1)
+    - [Privacy](./exercises/medium_1/01.rb)
+    - [Fixed Array](./exercises/medium_1/02.rb)
+    - [Students](./exercises/medium_1/03.rb)
+    - [Circular Queue](./exercises/medium_1/04.rb)

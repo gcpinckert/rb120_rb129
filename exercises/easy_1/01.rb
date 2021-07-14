@@ -40,9 +40,20 @@ puts banner
 - How to handle cases where width is too narrow / message is too wide?
 =end
 
+require 'io/console'
+
 class Banner
-  def initialize(message)
+  ROWS, COLUMNS = IO.console.winsize
+
+  attr_accessor :message, :width
+
+  def initialize(message, width = (COLUMNS-2))
     self.message = message
+    if message.size < width
+      @width = width
+    else
+      puts "Your message is too long for the specified width."
+    end
   end
 
   def to_s
@@ -51,22 +62,16 @@ class Banner
 
   private
 
-  attr_accessor :message
-
-  def banner_width
-    message.size + 2
-  end
-
   def horizontal_rule
-    "+#{'-' * banner_width}+"
+    "+#{'-' * width}+"
   end
 
   def empty_line
-    "|#{' ' * banner_width}|"
+    "|#{' ' * width}|"
   end
 
   def message_line
-    "|#{message.center(banner_width)}|"
+    "|#{message.center(width)}|"
   end
 end
 
@@ -75,3 +80,9 @@ puts banner1
 puts ''
 banner2 = Banner.new('')
 puts banner2
+
+# further exploration tests
+banner3 = Banner.new('To boldly go where no one has gone before.', 60)
+puts banner3
+puts ''
+banner4 = Banner.new('To boldly go where no one has gone before.', 40)
