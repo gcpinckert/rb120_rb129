@@ -147,7 +147,10 @@ class Card
 end
 
 class Participant
-  attr_accessor :hand, :total, :name, :score
+  include Printable
+  
+  attr_accessor :hand, :name, :score
+  attr_reader :total
 
   def initialize
     @hand = []
@@ -172,6 +175,8 @@ class Participant
 
   private
 
+  attr_writer :total
+
   def correct_for_aces
     hand.count { |card| card.value == 'A' }.times do
       self.total -= 10 if busted?
@@ -180,8 +185,6 @@ class Participant
 end
 
 class Dealer < Participant
-  include Printable
-
   DEALER_STAYS = 17
   DEALERS = ['Hal', 'Deep Thought', 'Skynet', 'Robbie', 'R2D2', 'C3PO']
 
@@ -204,8 +207,6 @@ class Dealer < Participant
 end
 
 class Player < Participant
-  include Printable
-
   def ask_move
     answer = nil
     print_centered "Would you like to (h)it or (s)tay?"
