@@ -2,6 +2,13 @@
 
 ## Table of Contents
 
+1. Study Guide
+2. [Lessons & Assignments](#lessons-&-assignments)
+3. [Exercises](#exercises)
+4. [To-Do](#to-do)
+
+## Lessons & Assignments
+
 - [Object Oriented Programming with Ruby Book](./OOP_book)
   - [Classes and Objects](./OOP_book/good_dog.rb)
   - [Inheritance](./OOP_book/animal.rb)
@@ -26,6 +33,9 @@
   - [Twenty One](./lesson_05/twenty_one)
     - [Assignment Summary and Notes](./lesson_05/twenty_one/summary_notes.md)
     - [Twenty One w/ Bonus Features Project](./lesson_05/twenty_one/twenty_one.rb)
+
+## Exercises
+
 - [Exercises](./exercises)
   - [OO Basics: Classes and Objects 1](./exercises/oo_basics_class_objects_1)
     - [Find the Class](./exercises/oo_basics_class_objects_1/01.rb)
@@ -115,3 +125,26 @@
     - [Task Manager](./exercises/debugging/08.rb)
     - [You've Got Mail](./exercises/debugging/09.rb)
     - [Does it Rock or Not?](./exercises/debugging/10.rb)
+
+## To-Do
+
+- [ ] Create study guide with focus on the following topics:
+  - [ ] Classes and Objects
+  - [ ] Use `attr_*` to create setter and getter methods
+  - [ ] How to call setters and getters
+  - [ ] Instance methods vs. class methods
+  - [ ] Method Access Control
+  - [ ] Referencing and setting instance variables vs. using getters and setters
+  - [ ] Class inheritance, encapsulation, and polymorphism
+  - [ ] Modules
+  - [ ] Method Lookup Path
+  - [ ] `self`
+    - [ ] calling methods with `self`
+    - [ ] more about `self`
+  - [ ] Reading OO code
+  - [ ] Fake operators and equality
+  - [ ] Truthiness
+  - [ ] Working with collaborator objects
+- [ ] Review all OO exercises
+  - [ ] Special focus on [Medium 1](./exercises/medium_1)
+  - [ ] Special focus on [Debugging](./exercises/debugging)
