@@ -2,10 +2,19 @@
 
 ## Table of Contents
 
-1. Study Guide
+1. [Study Guide](#study-guide)
 2. [Lessons & Assignments](#lessons-&-assignments)
 3. [Exercises](#exercises)
 4. [To-Do](#to-do)
+
+## Study Guide
+
+- [Classes and Objects](./study_guide/classes_objects.md)
+  - [Objects](./study_guide/classes_objects.md#objects)
+  - [Classes](./study_guide/classes_objects.md#classes)
+  - [Object Instantiation](./study_guide/classes_objects.md#initializing-a-new-object)
+  - [Instance Variables](./study_guide/classes_objects.md#instance-variables)
+  - [Instance Methods](./study_guide/classes_objects.md#instance-methods)
 
 ## Lessons & Assignments
 
@@ -145,6 +154,9 @@
   - [ ] Fake operators and equality
   - [ ] Truthiness
   - [ ] Working with collaborator objects
+- [ ] Review all Quiz Questions
 - [ ] Review all OO exercises
   - [ ] Special focus on [Medium 1](./exercises/medium_1)
   - [ ] Special focus on [Debugging](./exercises/debugging)
+- [ ] [RB129 Assesment Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
+- [ ] [OOP Questions (organized)](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
