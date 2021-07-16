@@ -15,6 +15,8 @@
   - [Object Instantiation](./study_guide/classes_objects.md#initializing-a-new-object)
   - [Instance Variables](./study_guide/classes_objects.md#instance-variables)
   - [Instance Methods](./study_guide/classes_objects.md#instance-methods)
+  - [Class Variables](./study_guide/classes_objects.md#class-variables)
+  - [Class Methods](./study_guide/classes_objects.md#class-methods)
 
 ## Lessons & Assignments
 
