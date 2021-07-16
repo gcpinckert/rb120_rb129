@@ -17,6 +17,9 @@
   - [Instance Methods](./study_guide/classes_objects.md#instance-methods)
   - [Class Variables](./study_guide/classes_objects.md#class-variables)
   - [Class Methods](./study_guide/classes_objects.md#class-methods)
+- [Setter and Getter Methods](./study_guide/setter_getter.md)
+  - [Getter Methods](./study_guide/setter_getter.md#getter-methods)
+  - [Setter Methods](./study_guide/setter_getter.md#setter-methods)
 
 ## Lessons & Assignments
 

@@ -8,7 +8,6 @@
 [Class Variables](#class-variables)
 [Class Methods](#class-methods)
 
-
 ## Objects
 
 In Ruby, anything that has a **value** can be considered an **object**. Basically, things like numbers, strings, arrays, classes, and modules. Methods, blocks, and variables _are not objects_.
