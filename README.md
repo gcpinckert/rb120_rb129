@@ -143,8 +143,8 @@
 ## To-Do
 
 - [ ] Create study guide with focus on the following topics:
-  - [ ] Classes and Objects
-  - [ ] Use `attr_*` to create setter and getter methods
+  - [x] Classes and Objects
+  - [x] Use `attr_*` to create setter and getter methods
   - [ ] How to call setters and getters
   - [ ] Instance methods vs. class methods
   - [ ] Method Access Control

@@ -142,3 +142,86 @@ jenny.number                    # => 555-5555
 jenny.change_number('867-5309')
 jenny.number                    # => 867-5309
 ```
+
+## Using attr_*
+
+Because setter and getter methods are so commonplace, Ruby gives us a built-in short have to create them, `attr_accessor`. This method takes a _symbol_ as an argument, which is used to create the method name for _both_ the getter and the setter methods. This is nice because we can now replace long and cumbersome method definitions with a single line.
+
+```ruby
+class Student
+  attr_accessor :name, :grade, :age
+
+  def initialize(n, a)
+    @name = name
+    @age = age
+    @grade = 'A'
+  end
+
+  def show_information
+    puts "Name: #{name}"      # we use getter method to access instance variables
+    puts "Age: #{age}"
+    puts "Grade: #{grade}"
+  end
+end
+
+gallant = Student.new('Gallant', 15)
+goofus = Student.new('Goofus', 15)
+
+gallant.show_information
+# => Name: Gallant
+# => Age: 15
+# => Grade: A
+
+goofus.show_informaiton
+# => Name: Goofus
+# => Age: 15
+# => Grade: A
+
+goofus.grade = 'C'             # use setter method to change instance variable
+goofus.show_information
+# => Name: Goofus
+# => Age: 15
+# => Grade: C
+```
+
+If you have attributes that you do not want modified from outside the class, you can create a getter method without a setter method for them by using the shorthand `attr_reader`.
+
+Further, if you want to be able to modify an attribute without necessarily being able to view it outside the class (such as for sensitive information such as a social security number or password), you can create a setter without a getter by using the `attr_writer` shorthand.
+
+```ruby
+class Person
+  attr_reader :name
+  attr_writer :secret
+  attr_accessor :age
+
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+
+  def introduce
+    puts "Hi, my name is #{name}!"  # we can access @name through a getter
+  end
+  
+  def have_a_birthday
+    self.age += 1                   # we can change @age through a setter
+  end
+end
+
+john = Person.new('John', 30)
+
+# We can access @name through a getter, but cannot change it through a setter
+john.introduce                      # => Hi, my name is John!
+john.name                           # => 'John'
+john.name = 'Johnny'                # => NoMethodError
+
+# We can assign @secret through a setter, but cannot access it through a getter
+john.secret = 'afraid of clowns'    # Appends 'afraid of clowns' to @secret
+john                                # => #<Person:0x0000561b2b42ac88 @age=30, @name="John", @secret="afraid of clowns">
+john.secret                         # => NoMethodError
+
+# We can both access and reassign @age because it has both a getter and a setter
+john.age                            # => 30
+john.have_a_birthday
+john.age                            # => 31
+```
