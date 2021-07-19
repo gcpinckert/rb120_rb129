@@ -450,3 +450,58 @@ Class methods are defined by `::` in the Ruby docs. They _must_ be called on the
 - An attribute is an instance variable name along with it's value. It only does us any good if there is either an associated getter or setter method or both.
   - The getter and setter methods are inherited, but the attribute behind these does not get inherited.
 - Every object has a state. This is the collection of all instance variables and their values as defined for an individual object. It is part of the object, and not the class, and therefore is not inherited.
+
+## Instance Methods vs Class Methods
+
+| Instance Method | Class Method |
+|------------------|---------------|
+| Called by an individual object, which must be instantiated | Called by the class itself, no object initialization necessary |
+| Defined as `def` + method_name + implementation + `end` | Keyword `self` must be added to method name in method definition within the class |
+| Defines a single behavior available to an _object_ of a class | Defines a behavior relevant to the _class as a whole_ |
+
+```ruby
+# class definition
+class Person
+  # class variable
+  @@people_present = []
+
+  # define getter method for @name instance variable
+  attr_reader :name
+
+  # instance method for object instantiation (called with ::new)
+  def initialize(name)
+    @name = name
+    @@people_present << name
+  end
+
+  # instance method
+  def introduce
+    puts "Hi, my name is #{name}!"
+  end
+
+  # class method (defined with self. in front of method name)
+  def self.show_people_present
+    @@people_present.each { |person| puts person }
+  end
+end
+
+anna = Person.new('Anna')   # initialize new object with class method ::new
+bob = Person.new('Bob')
+claire = Person.new('Claire')
+david = Person.new('David')
+
+anna.introduce              # call instance method on object
+  # => Hi, my name is Anna!
+bob.introduce
+  # => Hi, my name is Bob!
+claire.introduce
+  # => Hi, my name is Claire!
+david.introduce
+  # => Hi, my name is David!
+
+Person.show_people_present  # call class method on the class itself
+  # => Anna
+  # => Bob
+  # => Claire
+  # => David
+```

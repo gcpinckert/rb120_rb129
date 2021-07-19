@@ -122,7 +122,6 @@ jenny.change_number('867-5309')
 jenny.number                    # => 555-5555
 
 # this will work
-# this will not work
 class Contact
   attr_accessor :name, :number
 
@@ -145,7 +144,7 @@ jenny.number                    # => 867-5309
 
 ## Using attr_*
 
-Because setter and getter methods are so commonplace, Ruby gives us a built-in short have to create them, `attr_accessor`. This method takes a _symbol_ as an argument, which is used to create the method name for _both_ the getter and the setter methods. This is nice because we can now replace long and cumbersome method definitions with a single line.
+Because setter and getter methods are so commonplace, Ruby gives us a built-in short hand to create them: `attr_accessor`. This method takes a _symbol_ as an argument, which is used to create the method name for _both_ the getter and the setter methods. This is nice because we can now replace long and cumbersome method definitions with a single line.
 
 ```ruby
 class Student
@@ -186,7 +185,7 @@ goofus.show_information
 
 If you have attributes that you do not want modified from outside the class, you can create a getter method without a setter method for them by using the shorthand `attr_reader`.
 
-Further, if you want to be able to modify an attribute without necessarily being able to view it outside the class (such as for sensitive information such as a social security number or password), you can create a setter without a getter by using the `attr_writer` shorthand.
+Further, if you want to be able to modify an attribute without necessarily being able to view it outside the class (such as for sensitive information like a a social security number or password), you can create a setter without a getter by using the `attr_writer` shorthand.
 
 ```ruby
 class Person

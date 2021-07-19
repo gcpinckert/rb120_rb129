@@ -145,9 +145,9 @@
 - [ ] Create study guide with focus on the following topics:
   - [x] Classes and Objects
   - [x] Use `attr_*` to create setter and getter methods
-  - [ ] How to call setters and getters
-  - [ ] Instance methods vs. class methods
-  - [ ] Method Access Control
+  - [x] How to call setters and getters
+  - [x] Instance methods vs. class methods
+  - [x] Method Access Control
   - [ ] Referencing and setting instance variables vs. using getters and setters
   - [ ] Class inheritance, encapsulation, and polymorphism
   - [ ] Modules
