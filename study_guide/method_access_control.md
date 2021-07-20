@@ -67,7 +67,7 @@ In the code above, we define the `Person` class such that the setter and getter 
 
 When we initialize a new `Person` object, `joe`, we can only access the value stored within `@name` through the `#introduce` method. Any call to the `name` getter outside the class will result in a `NoMethodError`. We are still able to invoke the `name` getter method within the class, however, as can be seen in the implementation of the `#introduce` method.
 
-## Protcted
+## Protected
 
 Protected methods are those that are available within the _class_ as opposed to only being available within an _instance of the class_. For practical purposes, this means that they can be invoked by all objects within a certain class, but only from within the class.
 

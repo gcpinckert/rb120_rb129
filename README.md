@@ -17,9 +17,22 @@
   - [Instance Methods](./study_guide/classes_objects.md#instance-methods)
   - [Class Variables](./study_guide/classes_objects.md#class-variables)
   - [Class Methods](./study_guide/classes_objects.md#class-methods)
+  - [Note on Terms](./study_guide/classes_objects.md#a-note-on-terms)
+  - [Instance Methods vs Class Methods](./study_guide/classes_objects.md#instance-methods-vs-class-methods)
 - [Setter and Getter Methods](./study_guide/setter_getter.md)
   - [Getter Methods](./study_guide/setter_getter.md#getter-methods)
   - [Setter Methods](./study_guide/setter_getter.md#setter-methods)
+  - [Using attr_*](./study_guide/setter_getter.md#using_attr_*)
+- [Method Access Control](./study_guide/method_access_control.md)
+  - [Public](./study_guide/method_access_control.md#public)
+  - [Private](./study_guide/method_access_control.md#private)
+  - [Protected](./study_guide/method_access_control.md#protected)
+- [Inheritance](./study_guide/inheritance.md)
+  - [Class Inheritance](./study_guide/inheritance.md#class-inheritance)
+  - [Interface Inheritance](./study_guide/inheritance.md#interface-inheritance)
+  - [Method Lookup Path](./study_guide/inheritance.md#method-lookup-path)
+  - [Super](./study_guide/inheritance.md#super)
+  - [Object Methods](./study_guide/inheritance.md#object-methods)
 
 ## Lessons & Assignments
 
