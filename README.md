@@ -5,7 +5,8 @@
 1. [Study Guide](#study-guide)
 2. [Lessons & Assignments](#lessons-&-assignments)
 3. [Exercises](#exercises)
-4. [To-Do](#to-do)
+4. [Study Session Notes](#study-sessions)
+5. [To-Do](#to-do)
 
 ## Study Guide
 
@@ -155,6 +156,10 @@
     - [Task Manager](./exercises/debugging/08.rb)
     - [You've Got Mail](./exercises/debugging/09.rb)
     - [Does it Rock or Not?](./exercises/debugging/10.rb)
+
+## Study Sessions
+
+- [July 21 TA led](./study_guide/study_session_7_21.md)
 
 ## To-Do
 
