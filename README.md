@@ -33,6 +33,9 @@
   - [Method Lookup Path](./study_guide/inheritance.md#method-lookup-path)
   - [Super](./study_guide/inheritance.md#super)
   - [Object Methods](./study_guide/inheritance.md#object-methods)
+- [Polymorphism & Encapsulation](./study_guide/polymorphism_encapsulation.md)
+  - [Polymorphism](./study_guide/polymorphism_encapsulation.md#polymorphism)
+    - [Polymorphism Through Inheritance](./study_guide/polymorphism_encapsulation.md#polymorphism-through-inheritance)
 
 ## Lessons & Assignments
 
@@ -161,10 +164,10 @@
   - [x] How to call setters and getters
   - [x] Instance methods vs. class methods
   - [x] Method Access Control
-  - [ ] Referencing and setting instance variables vs. using getters and setters
+  - [x] Referencing and setting instance variables vs. using getters and setters
   - [ ] Class inheritance, encapsulation, and polymorphism
   - [ ] Modules
-  - [ ] Method Lookup Path
+  - [x] Method Lookup Path
   - [ ] `self`
     - [ ] calling methods with `self`
     - [ ] more about `self`

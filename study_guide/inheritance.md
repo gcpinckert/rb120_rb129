@@ -75,7 +75,7 @@ For more information, see [modules](link-goes-here).
 
 ## Method Lookup Path
 
-The **method lookup path** describes the order in which classes are inspected when a method is called to see how that method is defined. 
+The **method lookup path** describes the order in which classes are inspected when a method is called to see how that method is defined.
 
 Ruby starts with the nearest method definitions (such as the specific subclass) and the moves outward along containers until it finds the method in question. It then executes the code it finds, and stops looking. If Ruby never finds the method, it will throw a `NoMethodError` or `NameError`.
 
@@ -229,7 +229,7 @@ puts dads   # => A white Mazda Miata with 2 doors.
 puts jrs    # => A silver Toyota Camry with 4 doors.
 ```
 
-In the above code, we define the `Car` superclass `initialize` method to take three arguments: `make`, `model`, and `color`. These values are each assigned to an instance variable which describes an attribute for the new `Car` object. Further, each subclass (`StationWagon`, `Sedan`, and `SportsCar`) invokes that inherited `initialize` method by using the `super` keyword. 
+In the above code, we define the `Car` superclass `initialize` method to take three arguments: `make`, `model`, and `color`. These values are each assigned to an instance variable which describes an attribute for the new `Car` object. Further, each subclass (`StationWagon`, `Sedan`, and `SportsCar`) invokes that inherited `initialize` method by using the `super` keyword.
 
 By default, `super` will take any arguments passed to the method that calls it and pass them along to the method that it invokes. Therefore, when super invokes the `Car#initialize` method for each instantiation, the `make`, `model`, and `color` attributes are assigned to each instance of the `Car` subclass appropriately.
 
@@ -237,7 +237,7 @@ Because the subclasses also differ in the more specific attribute `@doors`, we i
 
 Be careful, however, when dealing with inherited / overriding methods that contain a different number of arguments. `super` alone will always pass along _all_ the arguments passed to the method that invokes it, so sometimes it is necessary to pick and choose which ones you need.
 
-To pass along certain selected arguments with `super`, pass them in explicitly like so: `super(arg1, arg2)`. 
+To pass along certain selected arguments with `super`, pass them in explicitly like so: `super(arg1, arg2)`.
 
 To call super without passing any arguments, add `()` to the end of the method call like so: `super()`
 
