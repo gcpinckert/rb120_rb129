@@ -37,6 +37,7 @@
 - [Polymorphism & Encapsulation](./study_guide/polymorphism_encapsulation.md)
   - [Polymorphism](./study_guide/polymorphism_encapsulation.md#polymorphism)
     - [Polymorphism Through Inheritance](./study_guide/polymorphism_encapsulation.md#polymorphism-through-inheritance)
+    - [Polymorphism Through Duck Typing](./study_guide/polymorphism_encapsulation.md#polymorphism-through-duck-typing)
 
 ## Lessons & Assignments
 
