@@ -38,6 +38,7 @@
   - [Polymorphism](./study_guide/polymorphism_encapsulation.md#polymorphism)
     - [Polymorphism Through Inheritance](./study_guide/polymorphism_encapsulation.md#polymorphism-through-inheritance)
     - [Polymorphism Through Duck Typing](./study_guide/polymorphism_encapsulation.md#polymorphism-through-duck-typing)
+  - [Encapsulation](./study_guide/polymorphism_encapsulation.md#encapsulation)
 
 ## Lessons & Assignments
 
@@ -171,7 +172,7 @@
   - [x] Instance methods vs. class methods
   - [x] Method Access Control
   - [x] Referencing and setting instance variables vs. using getters and setters
-  - [ ] Class inheritance, encapsulation, and polymorphism
+  - [x] Class inheritance, encapsulation, and polymorphism
   - [ ] Modules
   - [x] Method Lookup Path
   - [ ] `self`

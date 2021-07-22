@@ -257,3 +257,64 @@ the_game.play([Player.new, Coach.new, Referee.new, Cheerleader.new])
 ```
 
 The above example also shows polymorphism through duck typing. The various classes have no inheritance (either through class or interface) and yet we can see a distinct "participant" type that all exhibit the behavior `participate`, which takes one argument.
+
+## Encapsulation
+
+**Encapsulation** describes how we can separate and hide away different pieces of functionality, making them unavailable to the rest of the code base. It is essentially a form of _data protection_ that defines boundaries within a given application.
+
+In Ruby, encapsulation is achieved through creating objects and exposing certain methods to interact with them. That is, Ruby allows us to create objects that separate out the _interface_ (methods you call on them) from the _implementation_ (what code the methods actually execute). This allows us as programmers to think on a new level of abstraction.
+
+We know that everything in Ruby is an object. Let's take a built in object type, like `String`, for example. `String` objects have a number of methods that we can call on them. We know that the `reverse` method will return a new string with the order of characters reversed. We know that the `upcase` method will return a new string of all uppercase characters. We know that these methods achieve these things, but we don't really care about _how_ they do the things they do (the implementation). We are interested only in the _interface_ (the methods you can call on the object). This is the essence of encapsulation.
+
+```ruby
+'hello world'.reverse     # => "dlrow olleh"
+'hello world'.upcase      # => "HELLO WORLD"
+# we don't care about the implementation of the above methods
+# which are defined in the String class
+```
+
+Not only does encapsulation let us hide the internal representation of an object from the outside, we want to make sure we only expose the methods and properties that users of the object need. [Method access control](./method_access_control.md) is employed to ensure that we expose only these necessary properties and methods through the _public interface_ of a class. Anything else that deals only with the _internal implementation_ can be hidden as a _private_ method.
+
+```ruby
+class Person
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+  
+  def has_a_birthday
+    # call private setter method to increment @age within the class
+    self.age += 1
+  end
+  
+  def how_old
+    # call private getter method for desired output / protect sensitive information
+    puts "I am #{age - 3} years old"
+  end
+  
+  def introduce
+    # call private getter method to format @name correctly
+    puts "Hi my name is #{name.capitalize}"
+  end
+  
+  private
+  attr_reader :name
+  attr_accessor :age
+end
+
+sally = Person.new('sally', 65)
+
+sally.introduce           # => Hi, my name is Sally
+sally.has_a_birthday      # => increments @age
+sally.how_old             # => I am 63 years old
+```
+
+In the above example, we can call the method `#has_a_birthday` which increments the `@age` of a `Person` object appropriately. The setter for `age` is private so that this data is not changed in a way that doesn't make sense for a `Person` object.
+
+Further, we can use the public `introduce` method to ensure that we have the correct formatting for the `@name` attribute. This calls the private getter method `name` and formats the return value in the way we want.
+
+We can protect sensitive information by ensuring that it remains within the class. Here, when we call `how_old` on a `Person` object, it will tell a little white lie that the object in question is slightly younger than the reality. But it doesn't matter in the public interface, all we care about is that we are getting data that looks like it pertains to `@age`.
+
+The point of encapsulation is that we get the results we expect from the public interface. As long as this is the case, implementation details don't matter and they can stay _encapsulated_ within the class.
+
+It's good practice to keep as few methods as possible public. This makes working with a given class much more simple, and protects its data from undesired changes.
