@@ -39,6 +39,10 @@
     - [Polymorphism Through Inheritance](./study_guide/polymorphism_encapsulation.md#polymorphism-through-inheritance)
     - [Polymorphism Through Duck Typing](./study_guide/polymorphism_encapsulation.md#polymorphism-through-duck-typing)
   - [Encapsulation](./study_guide/polymorphism_encapsulation.md#encapsulation)
+- [Modules](./study_guide/modules.md)
+  - [Mixin Modules](./study_guide/modules.md#mixin-modules)
+  - [Namespacing](./study_guide/modules.md#namespacing)
+  - [Module Methods](./study_guide/modules.md#module-methods)
 
 ## Lessons & Assignments
 
@@ -173,7 +177,7 @@
   - [x] Method Access Control
   - [x] Referencing and setting instance variables vs. using getters and setters
   - [x] Class inheritance, encapsulation, and polymorphism
-  - [ ] Modules
+  - [x] Modules
   - [x] Method Lookup Path
   - [ ] `self`
     - [ ] calling methods with `self`
