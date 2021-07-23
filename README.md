@@ -43,6 +43,12 @@
   - [Mixin Modules](./study_guide/modules.md#mixin-modules)
   - [Namespacing](./study_guide/modules.md#namespacing)
   - [Module Methods](./study_guide/modules.md#module-methods)
+- [Self](./study_guide/self.md)
+  - [Inside Instance Methods](./study_guide/self.md#inside-instance-methods)
+  - [Inside Class Methods](./study_guide/self.md#inside-class-methods)
+  - [Inside Class Definitions](./study_guide/self.md#inside-class-definitions)
+  - [Inside Mixin Modules](./study_guide/self.md#inside-mixin-modules)
+  - [Outside Any Class](./study_guide/self.md#outside-any-class)
 
 ## Lessons & Assignments
 
@@ -179,9 +185,9 @@
   - [x] Class inheritance, encapsulation, and polymorphism
   - [x] Modules
   - [x] Method Lookup Path
-  - [ ] `self`
-    - [ ] calling methods with `self`
-    - [ ] more about `self`
+  - [x] `self`
+    - [x] calling methods with `self`
+    - [x] more about `self`
   - [ ] Reading OO code
   - [ ] Fake operators and equality
   - [ ] Truthiness
