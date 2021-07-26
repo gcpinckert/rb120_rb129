@@ -180,6 +180,7 @@
 ## Study Sessions
 
 - [July 21 TA led](./study_guide/study_session_7_21.md)
+- [July 22 SPOT](./study_guide/sppot_session_7_22.md)
 
 ## To-Do
 
