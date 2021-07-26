@@ -49,6 +49,12 @@
   - [Inside Class Definitions](./study_guide/self.md#inside-class-definitions)
   - [Inside Mixin Modules](./study_guide/self.md#inside-mixin-modules)
   - [Outside Any Class](./study_guide/self.md#outside-any-class)
+- [Fake Operators and Equality](./study_guide/fake_operators_equality.md)
+  - [Equivalence](./study_guide/fake_operators_equality.md#equivalence)
+    - [==](./study_guide/fake_operators_equality.md#==)
+    - [equal? and object_id](./study_guide/fake_operators_equality.md#equal?-and-object_id)
+    - [===](./study_guide/fake_operators_equality.md#===)
+    - [eql?](./study_guide/fake_operators_equality.md#eql?)
 
 ## Lessons & Assignments
 
