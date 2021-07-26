@@ -185,3 +185,92 @@ Note that defining a custom behavior for `===` is not often necessary, because u
 ### eql?
 
 The `eql?` method determines if two objects contain the sam value and if they are of the same class. It's used most frequently by hashes to determine equality among it's members (because keys must be unique). It's not used very often.
+
+## Fake Operators
+
+Ruby's **syntactical sugar** allows us to use more natural expressions with many methods, and this make them look like operators. It's important to know which of these so called "operators" is a _method_ that's acting as a _fake operator_ because these can be custom defined for our custom classes to change their default behavior.
+
+Method | Operator | Description
+------ | -------- | -----------
+no | `.`, `::` | Method/constant resolution operators
+yes | `[]`, `[]=` | Collection element getter and setter method
+yes | `**` | Exponential operator
+yes | `!`, `~`, `+`, `-` | Not, complement, unary plus and minus (method names for the last two are `+@` and `-@`)
+yes | `*`, `/`, `%` | Multiply, divide, and modulo
+yes | `+`, `-` | Plus, minus
+yes | `>>`, `<<` | Right and left shift
+yes | `&` | Bitwise "and"
+yes | `^`, `|` | Bitwise exclusive "or" and regular (inclusive) "or"
+yes | `<=`, `<`, `>`, `>=` | Less than/equal to, less than, greater than, greater than/equal to
+yes | `<=>`, `==`, `===`, `!=`, `=~`, `!~` | Equality and pattern matching (`!=` and `!~` cannot be directly defined)
+no | `&&` | Logical "and"
+no | `||` | Logical "or"
+no | `..`, `...` | Inclusive range, exclusive range
+no | `? :` | Ternary if-then-else
+no | `=`, `%=`, `+=`, `!=`, `&=`, `>>=`, `<<=`, `*=`, `**=`, `{}` | Assignment (and assignment shortcuts) and block delimiter
+
+Note that overriding fake operators _can_ be dangerous. Since there are so many, we never _really_ know what an expression like `obj1 + obj2` will do.
+
+### Equality Methods
+
+One of the most common fake operators to override is `==`. This also provides us with an `!=` method. See [equivalence](#equivalence).
+
+### Comparison Methods
+
+Implementing our own custom behavior for comparison methods gives us a nice syntax we can use to compare our custom objects. By default, the comparison methods do not know how or what values to compare. We define them to tell them which values we want to compare, again relying on the specific implementations for comparison methods within Ruby's built in classes.
+
+Note that unlike `==` and `!=`, defining `>` does **not** automatically give us `<`. If we want to use both we have to define them both within our class.
+
+```ruby
+# this will not work
+class Athlete
+  attr_accessor :name, :height
+
+  def initialize(name, height)
+    @name = name
+    @height = height  # height value is in meters
+  end
+end
+
+shaq = Athlete.new('Shaq', 2.16)
+kobe = Athlete.new('Kobe', 1.98)
+
+puts 'shaq is taller than kobe' if shaq > kobe
+# => NoMethodError: undefined method '>'
+```
+
+In the above code, we define a class `Athlete` whose instances exhibit the attributes `name` and `height`. We then initialize two new `Athlete` objects `shaq` and `kobe`. `shaq` is assigned an `@height` of 2.16 meters during initialization and `kobe` is assigned an `@height` of 1.98 meters during initialization. We then try to compare the two `Athlete` objects with `>` to see which one is taller.
+
+However, we have no defined a `>` method for our `Athlete` class. `>` is in fact an instance method we need to define for the class so Ruby knows which values within the object to compare, and not an operator as it might appear.
+
+```ruby
+# this will work
+class Athlete
+  attr_accessor :name, :height
+
+  def initialize(name, height)
+    @name = name
+    @height = height  # height value is in meters
+  end
+  
+  def >(other_athlete)
+    height > other_athlete.height # relies on float#>
+  end
+end
+
+shaq = Athlete.new('Shaq', 2.16)
+kobe = Athlete.new('Kobe', 1.98)
+
+puts 'shaq is taller than kobe' if shaq > kobe
+# => 'shaq is taller than kobe'
+```
+
+In the above code, we define a custom `>` that tells Ruby what values to compare within our `Athlete` objects. In this case, it's the value referenced by the instance variable `@height`. We rely on the `Float#>` method to implement our custom `Athlete#>` method. Then when we call `Athlete#>` on the `shaq` object and pass it the `kobe` object as an argument, Ruby executes the `Athlete#>` implementation, which compares the `@height` of each object. In this case, `shaq` has a greater height than `kobe` so `'shaq is taller than kobe'` is output.
+
+Note that the above does not automatically generate an `Athlete#<` method. If we wish to utilize this, we'll need to define it individually, which we can do quickly like so:
+
+```ruby
+def <(other_athlete)
+  !self.>(other_athlete)
+end
+```

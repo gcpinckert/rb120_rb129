@@ -55,6 +55,8 @@
     - [equal? and object_id](./study_guide/fake_operators_equality.md#equal?-and-object_id)
     - [===](./study_guide/fake_operators_equality.md#===)
     - [eql?](./study_guide/fake_operators_equality.md#eql?)
+  - [Fake Operators](./study_guide/fake_operators_equality.md#fake-operators)
+    - [Comparison Methods](./study_guide/fake_operators_equality.md#comparison-methods)
 
 ## Lessons & Assignments
 
