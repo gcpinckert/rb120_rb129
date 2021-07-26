@@ -57,6 +57,9 @@
     - [eql?](./study_guide/fake_operators_equality.md#eql?)
   - [Fake Operators](./study_guide/fake_operators_equality.md#fake-operators)
     - [Comparison Methods](./study_guide/fake_operators_equality.md#comparison-methods)
+    - [Right and Left Shift](./study_guide/fake_operators_equality.md#right-and-left-shift)
+    - [Plus](./study_guide/fake_operators_equality.md#the-plus-method)
+    - [Element Setters and Getters](./study_guide/fake_operators_equality.md#element-setters-and-getters)
 
 ## Lessons & Assignments
 
@@ -198,7 +201,7 @@
     - [x] calling methods with `self`
     - [x] more about `self`
   - [ ] Reading OO code
-  - [ ] Fake operators and equality
+  - [x] Fake operators and equality
   - [ ] Truthiness
   - [ ] Working with collaborator objects
 - [ ] Review all Quiz Questions
