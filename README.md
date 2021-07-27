@@ -60,6 +60,9 @@
     - [Right and Left Shift](./study_guide/fake_operators_equality.md#right-and-left-shift)
     - [Plus](./study_guide/fake_operators_equality.md#the-plus-method)
     - [Element Setters and Getters](./study_guide/fake_operators_equality.md#element-setters-and-getters)
+- [Collaborator Objects](./study_guide/collaborator_objects.md)
+  - [Example 1: Library and Book](./study_guide/collaborator_objects.md#example-1)
+  - [Example 2: Deck and Card](./study_guide/collaborator_objects.md#example-2)
 
 ## Lessons & Assignments
 
