@@ -277,6 +277,8 @@ We might expect that calling the instance method `#speak` would result in a `Nam
 
 We then invoke the `#assign_personality` instance method, which assigns a value selected at random from an array to `@personality`. We can see by examining the `fluffy` object that `@personality` now references a value of `'friendly'`. Calling the `#speak` method again, we see the output of `'purrrr'` showing that the value referenced by `@personality` has indeed changed.
 
+[Inheritance can affect where instance variables are in scope](./inheritance.md#instance-variables)
+
 ## Instance Methods
 
 **Instance methods** are methods defined within a class that describe the behavior available to _all_ instances of that class. Instance methods have access to instance variables due to their scope (see above), so you can use them to track and manipulate data that tracks a particular object's state.
@@ -382,7 +384,7 @@ billy = Person.new('Billy')
 Person::total_number_of_people  # => 2
 ```
 
-Class variables from a superclass are available to subclasses via [inheritance](#link-goes-here). The class variable is loaded when the class is evaluated by Ruby, so class variables do not require methods that explicitly initialize them.
+Class variables from a superclass are available to subclasses via [inheritance](./inheritance.md). The class variable is loaded when the class is evaluated by Ruby, so class variables do not require methods that explicitly initialize them.
 
 ```ruby
 # going back to our Dog example from earlier...

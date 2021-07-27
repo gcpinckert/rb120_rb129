@@ -363,3 +363,177 @@ mushroom.object_id              # => 300
 One such example is the `Object` method `send`. This is ostensibly another way for an object to call a method, in which a symbol or string is passed that represents the method you want to call. Be sure not to name any of your custom defined methods `send`, or use the name of any other particularly useful method defined in the `Object` class.
 
 There are a few exceptions to this, notably `to_s`, which is commonly overridden when we want a different string representation of an object. Other methods that tend to be overridden include methods of equivalence and comparison such as `==` and `<=>`.
+
+## Variable Scope with Inheritance
+
+### Instance Variables
+
+Instance variables that are initialized in a superclass are available in instances of a subclass.
+
+```ruby
+class Pet
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat < Pet
+  def speak
+    puts "meow! my name is #{@name}! meow!"
+  end
+end
+
+felix = Cat.new('Felix')
+
+felix.speak
+# => meow! my name is Felix! meow!
+```
+
+In the code above, we have a superclass `Pet` and a subclass that inherits from it, `Cat`. The `Cat` class inherits the `initialize` method from `Pet` which contains the instance variable `@name`. Therefore, we can access this instance variable through inheritance without ever utilizing the `Pet` class. This is shown with the implementation of the `Cat#speak` method, which accesses the instance variable `@name` to create a unique output for each instance of `Cat`.
+
+We can see this demonstrated when we initialize a new `Cat` object `felix` and then call the `#speak` method on it. The method outputs the string `'meow! my name is Felix! meow!'` so we know that the `Cat` class has access to the instance variable `@name`, which is output using string interpolation in the string. Further, notice that we are doing this by accessing the instance variable directly, and not relying on an inherited getter method's return value.
+
+If inherited method from a superclass that initialize an instance variable are overridden, the variable will never be initialized, and it will return `nil` when invoked.
+
+Given the above example, see what happens when we override the `Pet` initialize method with one that does not initialize the instance variable `@name`.
+
+```ruby
+class Pet
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat < Pet
+  def initialize(name); end
+  
+  def speak
+    puts "meow! my name is #{@name}! meow!"
+  end
+end
+
+felix = Cat.new('Felix')
+
+felix.speak
+# => meow! my name is ! meow!
+```
+
+In the code above, our `Cat#initialize` method overrides the `Pet#initialize` method. `Cat#initialize` never initializes the `@name` instance variable. Therefore, when we invoke `#speak` on `felix`, the call to `@name` returns `nil` and the string `'meow! my name is ! meow!'` is output.
+
+Instance variables can also be inherited through interface inheritance, i.e. from modules that are included within the class. However, these variables must also be initialized, or else they return a value of `nil`. Unlike classes, modules do not have the capacity for object instantiation, so if the instance variable in question is initialized within a method, that method must be called to complete the initialization process.
+
+```ruby
+module Cuddleable
+  def can_cuddle
+    @cuddles = true
+  end
+end
+
+class Pet
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat < Pet
+  include Cuddleable
+  
+  def speak
+    puts "meow! my name is #{@name}! meow!"
+  end
+  
+  def cuddle
+    if @cuddles 
+      puts "purr purr"
+    else
+      puts "hiss"
+    end
+  end
+end
+
+felix = Cat.new('Felix')
+
+felix.cuddle              # => hiss
+```
+
+In the above example, the instance variable `@cuddles` is initialized in the module `Cuddleable`. However, we never invoke the method in which it is initialized `#can_cuddle`. Therefore, when we instantiate a new `Cat` object `felix` and invoke the `cuddle` method on it, the conditional inside the method will evaluate to `false` and the string `'hiss'` will be output. This is because the `@cuddles` instance variable was never initialized and returns a value of `nil`, which evaluates to false.
+
+We can fix this by calling the `#can_cuddle` method on the `felix` `Cat` instance, which initializes the `@cuddles` variable. In this case, the conditional inside `#cuddle` evaluates to `true` and the string `'purr purr'` is output.
+
+```ruby
+module Cuddleable
+  def can_cuddle
+    @cuddles = true
+  end
+end
+
+class Pet
+  def initialize(name)
+    @name = name
+  end
+end
+
+class Cat < Pet
+  include Cuddleable
+  
+  def speak
+    puts "meow! my name is #{@name}! meow!"
+  end
+  
+  def cuddle
+    if @cuddles 
+      puts "purr purr"
+    else
+      puts "hiss"
+    end
+  end
+end
+
+felix = Cat.new('Felix')
+
+felix.can_cuddle
+felix.cuddle              # => purr purr
+```
+
+### Class Variables
+
+[Class variables](./classes_objects.md#class-variables) from a superclass are available to all subclasses via inheritance. Class variables do not require methods that explicitly initialize them as instance variables do.
+
+However, only one class variable is available across all subclasses. This means that any alterations made to a class variable from a subclass can change the value of the class variable across _all_ classes that inherit it, include the superclass in which it is originally defined.
+
+```ruby
+class Pet
+  @@scientific_name = 'animalus domesticus'
+  
+  def initialize(name)
+    @name = name
+  end
+  
+  def self.scientific_name
+    @@scientific_name
+  end
+end
+
+class Cat < Pet
+  @@scientific_name = 'felis catus'
+  
+  def speak
+    puts "meow! my name is #{@name}! meow!"
+  end
+  
+  def cuddle
+    if @cuddles 
+      puts "purr purr"
+    else
+      puts "hiss"
+    end
+  end
+end
+
+puts Pet.scientific_name        # => felis catus
+puts Cat.scientific_name        # => felis catus
+```
+
+In the above code, we initialize the class variable `@@scientific_name` and assign it to the string `'animalus domesticus'` in the superclass `Pet`. Then, in the subclass `Cat` (which inherits from `Pet`) we override the value of the class variable, and change it to the string `'felis catus'`. Note that this will change the value of `@@scientific_name` regardless of whether we access it from the `Cat` subclass or the `Pet` superclass.
+
+This is shown when we output the value returned by calling the class method `scientific_name` on `Pet` and `Cat`, both of which output the string `'felis catus'`.
