@@ -208,7 +208,7 @@
   - [x] Fake operators and equality
   - [ ] Truthiness
   - [x] Working with collaborator objects
-- [ ] Review all Quiz Questions
+- [x] Review all Quiz Questions
 - [ ] Review all OO exercises
   - [ ] Special focus on [Medium 1](./exercises/medium_1)
   - [ ] Special focus on [Debugging](./exercises/debugging)
