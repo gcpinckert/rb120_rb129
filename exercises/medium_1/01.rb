@@ -1,12 +1,14 @@
 # Modify the given class such that flip_switch and switch= are private
+# Add a private getter for `@switch`
+# Add a method to `Machine` that shows how to use that getter
 
 class Machine
   def start
-    self.flip_switch(:on)
+    flip_switch(:on)
   end
 
   def stop
-    self.flip_switch(:off)
+    flip_switch(:off)
   end
 
   def show_switch_state
