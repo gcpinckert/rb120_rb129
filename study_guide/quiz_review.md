@@ -4,6 +4,7 @@
 
 - [Lesson 1](#lesson-1)
 - [Lesson 2](#lesson-2)
+- [Lesson 3](#lesson-3)
 
 ## Lesson 1
 
@@ -770,5 +771,395 @@ class DessertRecipe < Recipe; end
 ```
 
 We would not expect to see a relationship between `RecipeBook` and `Ingredient`. That's because `Ingredient` is a collaborator in the `Recipe` (and it's subclasses) instances. `RecipeBook` deals with `Recipe` objects as part of its state, which means it does not need to be aware of any `Ingredient` objects. We can let the `Recipe` objects within take care of any interface with `Ingredient` that is required. This is an example of encapsulation.
+
+## Lesson 3
+
+### Question 3
+
+```ruby
+str1 = "I'm a string"
+str2 = str1
+```
+
+The above code initializes the string object `"I'm a string"` and assigns it to the local variable `str1`. Then we assign the object referenced by `str1` to the local variable `str2`. At this point, both variables reference the same object in memory.
+
+We can demonstrate this by calling the `Object#equal?` method, which checks to see if the object passed as argument is the same object in memory as the calling object.
+
+```ruby
+str1.equal?(str2)
+```
+
+This would not work with the `==` method. Though the `==` method is defined in the `Object` class to see if both the calling object and the argument are the same object in memory, there is a `String#==` instance method defined that overrides it. The `String#==` method only checks to see if the value within each object is identical, and would return `true` for two separate objects that contain the same value.
+
+```ruby
+a = 'string'
+b = 'string'
+
+a == b      # => true
+a.equal? b  # => false
+```
+
+We can also check the unique object id for each object and compare them using the `object_id` method. This returns a unique numerical value for each object in memory. If those values are the same, the objects in question is the same object. If they are not, the objects in question are two different objects.
+
+```ruby
+str1.object_id == str2.object_id    # => true
+```
+
+### Question 4
+
+```ruby
+str1 = "I am a string"
+str2 = "I am a string"
+p str1
+"I am a string"
+p str2
+"I am a string"
+```
+
+Here, we initialize two different string objects with identical values `'I am a string'`. Equivalence methods that check for identical values will return `true`, but those that check to see if the string objects are themselves the same object in memory will return `false`.
+
+```ruby
+str1 == str2             # => true
+str1 === str2            # => true
+(str1 <=> str2) == 0     # => true
+str1.equal?(str2)        # => false
+```
+
+Note that above, the `===` method checks to see if the argument passed _is a member_ of the set that the calling object represents. Because all the characters in `str2` are represented within `str1`, we can say that it is a member of the set represented by `str1` and the return value is `true`.
+
+### Question 5
+
+```ruby
+class Thing
+  attr_accessor :size
+
+  def initialize(s)
+    @size = s
+  end
+
+  def ==(other_thing)
+    size == other_thing.size
+  end
+end
+
+thing1 = Thing.new(5)
+thing2 = Thing.new(5)
+thing3 = thing1
+thing1.size = 4
+```
+
+Here we define class `Thing` whose instances have one attribute represented by the instance variable `@size`. We then define a `==` method, which compares the value referenced by `@size` in two instances of `Thing`.
+
+We instantiate a new `Thing` object, whose `@size` instance variable points to the integer `5`, and assign it to local variable `thing1`. Then we instantiate another `Thing` object, whose `@size` instance variable points to the integer `5`, and assign it to local variable `thing2`. Next we initialize local variable `thing3`, and assign it the object referenced by `thing1`. Now both `thing1` and `thing3` point to the same object in memory.
+
+Finally, we use the `size=()` setter method to reassign the `@size` instance variable in the object referenced by `thing1` to `4`. Because both local variables `thing1` and `thing3` reference the same object, this change will be reflected in both.
+
+Therefore, when we compare `thing2` with either `thing1` or `thing3` using `==`, it will return `false`. This is because the values referenced by the `@size` instance variables within each are different.
+
+However, if we were to use either `==` or `equal?` to compare `thing1` and `thing3`, `true` would be returned each time. This is because not only is the value referenced by `@size` identical, both objects are in fact the same object in memory.
+
+```ruby
+thing1 == thing2          # => false
+thing2 == thing3          # => false
+thing3 == thing1          # => true
+
+thing1.equal?(thing2)     # => false
+thing2.equal?(thing3)     # => false
+thing3.equal?(thing1)     # => true
+```
+
+### Question 6
+
+```ruby
+class Circle
+  attr_reader :radius
+
+  def initialize(r)
+    @radius = r
+  end
+
+  def >(other)
+    radius > other.radius
+  end
+
+  def ==(other)
+    radius == other.radius
+  end
+end
+
+circle1 = Circle.new(5)
+circle2 = Circle.new(3)
+circle3 = Circle.new(5)
+```
+
+Here we define the class `Circle` whose instances will contain the attribute radius represented by the instance variable `@radius`. Then we instantiate three new `Circle` objects. A `Circle` object with a `@radius` of `5` is assigned to local variable `circle1`. A `Circle` object with `@radius` of `3` is assigned to local variable `circle2`. A `Circle` object with `@radius` of `5` is assigned to local variable `circle3`.
+
+We also define a `>` method and a `==` method for comparison within the `Circle` class. Both methods compare the value assigned to the instance variable `@radius` for both the calling object and the object passed as argument. This means that we can compare `Circle` objects and understand if they are equal, or if one is greater than the other, based on the integer referenced by `@radius` in each.
+
+The `==` method definition automatically implements a `!=` method, which we can use to discover if two `Circle` objects are not equal (with respect to their radius). However, the `>` does not automatically implement a `<` method, the `<` method must be separately defined on it's own if we wish to utilize it.
+
+```ruby
+circle1 > circle2      # => true
+circle1 == circle3     # => true
+circle1 != circle2     # => true
+circle2 < circle3      # => NoMethodError
+```
+
+### Question 7
+
+```ruby
+number = 42
+
+case number
+when 1          then 'first'
+when 10, 20, 30 then 'second'
+when 40..49     then 'third'
+end
+```
+
+Here we have a case statement, based on the value referenced by local variable `number`. In a case statment, Ruby implicitly uses the `===` method for comparison. The `===` method checks to see if the object passed as an argument is a member in the set represented by the calling object.
+
+In this case, first Ruby will check to see if `42` (the value referenced by `number`) is a member in the set `1`. This will return `false`. Then, Ruby will check to see if `42` is a number in the set of `10`, `20`, `30`. This will return `false`. Finally, Ruby will check to see if `42` is a member in the range `40..49`. This will return `true`, so the string object `'third'` is returned by the case statement.
+
+### Question 8
+
+```ruby
+class Person
+  TITLES = ['Mr', 'Mrs', 'Ms', 'Dr']
+
+  @@total_people = 0
+
+  attr_reader :name
+
+  def initialize(name)
+    @name = name
+  end
+
+  def age
+    @age
+  end
+end
+```
+
+Here we define the class `Person`. Within `Person` we have a constant `TITLES` which exhibits _lexical scope_. Constants can be accessed from both instance and class methods from the class in which they are defined. However, if we want to access them from elsewhere (i.e. in a different class), we need to append that class using the _namespace resolution operator_ `::`.
+
+```ruby
+class Contact
+  def initialize(person, info)
+    @person = person
+    @info = info
+  end
+
+  def show_info
+    # access constant from the Person class
+    puts Person::TITLES.sample + person.name
+  end
+end
+```
+
+The class variable `@@total_people` is scoped on the class level. That means it is available throughout the class it is defined, in either class or instance methods. However, if we want to access it outside the class, we need to define a public method as an interface that allows us to do so.
+
+```ruby
+def self.total_people
+  @@total_people
+end
+```
+
+The instance variable `@name` and the instance variable `@age` are available on the object level. That is, they are available within any instance methods defined within the class. In fact, even if the instance variable is not initialized, it will not throw a `NameError`. Rather, Ruby will consider the instance variable in question to point to `nil`. This is the case for the above example `@age`, which is never initialized within the class. Ruby will consider this to reference `nil`.
+
+```ruby
+joe = Person.new('Joe')
+p joe.age                   # => nil
+p joe                       # => #<Person:0x00005653fc30e390 @name="Joe">
+```
+
+### Question 9
+
+```ruby
+module Speedy
+  def run_fast
+    @speed = 70
+  end
+end
+
+class Animal
+  def initialize(name, age)
+    @name = name
+    @age = age
+  end
+end
+
+class Dog < Animal
+  DOG_YEARS = 7
+
+  def initialize(name, age)
+    @dog_age = age * DOG_YEARS
+  end
+end
+
+class Greyhound < Dog
+  include Speedy
+end
+
+grey = Greyhound.new('Grey', 3)
+```
+
+Here we have the module `Speedy`, the superclass `Animal` with subclass `Dog` which is also superclass to subclass `Greyhound`. Then we instantiate a new `Greyhound` object and assign it to the local variable `grey`.
+
+`Greyhound` includes the module `Speedy`, so the initialized object will have access to the instance variable `@speed`. However, `@speed` is not initialized until we call the `run_fast` instance method, so at the moment Ruby will consider it to reference `nil`.
+
+`Greyhound` inherits the `initialize` method from the superclass `Dog` which takes two arguments, `name` and `age`. During initialization, it will initialize the `@dog_age` instance variable and assign it to the value returned by `age * DOG_YEARS`.
+
+There is also an `initialize` method in the superclass `Animal` which initializes the instance variables `@name` and `@age`. However, because this method is overridden by the `Dog#initialize` method, these instance variables are never initialized, and Ruby will consider them to reference `nil`.
+
+```ruby
+grey = Greyhound.new('Grey', 3)
+p grey
+# => #<Greyhound:0x0000561871c8dd10 @dog_age=21>
+# only the @dog_age instance variable is initialized
+
+# initializes the @speed instance variable
+grey.run_fast
+p grey
+# => #<Greyhound:0x00005653487409e0 @dog_age=21, @speed=7>
+
+# we cannot initialize @name and @age unless we instantiate an `Animal` object
+```
+
+### Question 10
+
+```ruby
+class Shape
+  @@sides = nil
+
+  def self.sides
+    @@sides
+  end
+
+  def sides
+    @@sides
+  end
+end
+
+class Triangle < Shape
+  def initialize
+    @@sides = 3
+  end
+end
+
+class Quadrilateral < Shape
+  def initialize
+    @@sides = 4
+  end
+end
+```
+
+Here we define the superclass `Shape` and the subclasses `Triangle` and `Quadrilateral` both of which inherit from `Shape`. Within `Shape`, we initialize the class variable `@@sides` and set it's value to `nil`. `@@sides` is available in both `Triangle` and `Quadrilateral` which inherit from `Shape`, however, only one copy is shared between all instances of all three classes.
+
+Therefore, when we reassign `@@sides` to `3` during initialization of a new `Triangle` object, it will change the value of `@@sides` to `3`, regardless of where we reference it from. Similarly, when we reassign `@@sides` to `4` during initialization of a new `Quadrilateral` object, it changes the value of `@@sides` to `4` regardless of where we reference it from.
+
+```ruby
+p Shape.sides             # => nil
+p Triangle.sides          # => nil
+p Quadrilateral.sides     # => nil
+
+Triangle.new
+
+p Shape.sides             # => 3
+p Triangle.sides          # => 3
+p Quadrilateral.sides     # => 3
+
+Quadrilateral.new
+
+p Shape.sides             # => 4
+p Triangle.sides          # => 4
+p Quadrilateral.sides     # => 4
+```
+
+### Question 11
+
+```ruby
+module Describable
+  SIDES = nil
+
+  def describe_shape
+    "I am a #{self.class} and have #{SIDES} sides."
+  end
+end
+
+class Shape
+  include Describable
+
+  def self.sides
+    SIDES
+  end
+end
+
+class Quadrilateral < Shape
+  SIDES = 4
+end
+
+class Square < Quadrilateral; end
+
+Square.sides # => 4
+Square.new.sides # => 4
+Square.new.describe_shape # => "I am a Square and have 4 sides."
+```
+
+Here we have the module `Describable` which is included in the superclass `Shape`. The subclass`Quadrilateral` inherits from `Shape`, and further, the subclass `Square` inherits from `Quadrilaterial` (and therefore both have the methods of `Describable` available to them).
+
+We then attempt to call the class method `::sides` on the `Square` class, which should return the value referenced by the `Quadrilateral` constant `SIDES`. This constant is inherited by `Square`. However, the method is defined in the `Shape` class, which does not have access to the constant initialized in `Quadrilateral` without the namespace resolution operator. In order to access the constant `SIDES`, we need to append `self::` to `Sides`. `self` will reference the calling object, in this case the class `Square`, which allows us to access the constant `SIDES`.
+
+```ruby
+def self.sides
+  self::SIDES
+end
+```
+
+Next, we attempt to call an instance method `sides` on a newly instantiated `Square` object. However, no such instance method is defined, only the class method `::sides` which must be called directly on the class. We can fix this by either defining a new instance method `sides`. This method can be in either the `Shape`, `Quadrilaterial` or `Square` class.
+
+```ruby
+def sides
+  SIDES
+end
+```
+
+Finally, we call the `describe_shape` method on a new `Square` instance. Within the method, we again try to reference `SIDES`. However, we do not have access to the `SIDES` constant within the module, as it is initialized in the `Quadrilateral` class. Again, we can rely on the namespace resolution operator here to get us what we need. In this case, we need to append `self.class::` to the reference to `SIDES`. That's because in this case, `self` references the calling object, an instance of the class `Square`. Adding the call to `class` gets us the class object itself, to which we append the namespace resolution operator `::`.
+
+```ruby
+"I am a #{self.class} and have #{self.class::SIDES} sides."
+```
+
+Fully refactored code:
+
+```ruby
+module Describable
+  def describe_shape
+    "I am a #{self.class} and have #{self.class::SIDES} sides."
+  end
+end
+
+class Shape
+  include Describable
+
+  def self.sides
+    self::SIDES
+  end
+end
+
+class Quadrilateral < Shape
+  SIDES = 4
+  
+  def sides
+    SIDES
+  end
+end
+
+class Square < Quadrilateral; end
+
+p Square.sides # => 4
+p Square.new.sides # => 4
+p Square.new.describe_shape # => "I am a Square and have 4 sides."
+```
 
 <!-- markdownlint-disable-file MD024 -->
