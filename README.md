@@ -6,7 +6,8 @@
 2. [Lessons & Assignments](#lessons-&-assignments)
 3. [Exercises](#exercises)
 4. [Study Session Notes](#study-sessions)
-5. [To-Do](#to-do)
+5. [Practice Tests](#practice-tests)
+6. [To-Do](#to-do)
 
 ## Study Guide
 
@@ -189,9 +190,20 @@
 - [July 21 TA led](./study_guide/study_session_7_21.md)
 - [July 22 SPOT](./study_guide/sppot_session_7_22.md)
 
+## Practice Tests
+
+- [Practice Test 1](./study_guide/practice_test1.md)
+- [Practice Test 2](./study_guide/practice_test2.md)
+- [Shorter Practice Test](./study_guide/practice_test_short.md)
+
 ## To-Do
 
-- [ ] Create study guide with focus on the following topics:
+- [x] Generate practice tests
+- [ ] Take practice tests
+- [ ] Review all OO exercises
+  - [ ] Special focus on [Medium 1](./exercises/medium_1)
+  - [ ] Special focus on [Debugging](./exercises/debugging)
+- [x] Create study guide with focus on the following topics:
   - [x] Classes and Objects
   - [x] Use `attr_*` to create setter and getter methods
   - [x] How to call setters and getters
@@ -204,13 +216,10 @@
   - [x] `self`
     - [x] calling methods with `self`
     - [x] more about `self`
-  - [ ] Reading OO code
+  - [x] Reading OO code
   - [x] Fake operators and equality
-  - [ ] Truthiness
+  - [x] Truthiness
   - [x] Working with collaborator objects
 - [x] Review all Quiz Questions
-- [ ] Review all OO exercises
-  - [ ] Special focus on [Medium 1](./exercises/medium_1)
-  - [ ] Special focus on [Debugging](./exercises/debugging)
-- [ ] [RB129 Assesment Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
+- [x] [RB129 Assesment Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
 - [ ] [OOP Questions (organized)](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
