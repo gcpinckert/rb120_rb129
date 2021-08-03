@@ -368,7 +368,7 @@ There are a few exceptions to this, notably `to_s`, which is commonly overridden
 
 ### Instance Variables
 
-Instance variables that are initialized in a superclass are available in instances of a subclass.
+[Instance variables](./study_guide/classes_objects.md#instance-variables) that are initialized in a superclass are available in instances of a subclass.
 
 ```ruby
 class Pet

@@ -287,7 +287,7 @@ Both of these additions will achieve the desired result, but the first, initiali
 
 ---
 
-6
+6 (13:07)
 
 ```ruby
 class Character
@@ -314,6 +314,34 @@ p sir_gallant.speak
 ```
 
 _What is output and returned, and why? What would we need to change so that the last line outputs `”Sir Gallant is speaking.”`?_
+
+In the above code, we initialize a new instance of the class `Knight`, defined above, and assign it to the local variable `sir_gallant`. Then we call the `name` instance method on that object. This outputs the string `'Sir Gallant'`. If we look at the implementation of the `Knight` class, we can see that there is a `Knight#name` instance method which overrides the `name` method inherited from the `Character` class. Note that the `Character#name` instance method comes from the `attr_accessor :name` statement on line 2.
+
+Within the `Knight#name` instance method we are taking the string `"Sir "` and concatenating it with the value returned by `super`. `super`, in Ruby, is a special keyword that looks up the class inheritance chain for a method of the same name of the one that invokes it, and executes that method. In this case, it will execute the `Character#name` getter method defined by `attr_accessor :name`. The `attr_accessor` is Ruby shorthand that gives us a "default" getter method implementation that simply returns the value referenced by the instance variable of the same name. It acts just as the following method:
+
+```ruby
+def name
+  @name
+end
+```
+
+In this case, due to the implementation of the `Character#initialize` constructor method (which is inherited by Knight), the `@name` instance variable in the object referenced by `sir_gallant` points to the string `"Gallant"`, which we passed as an argument during object instantiation. This string is concatenated with `"Sir "` in the `Knight#name` method and we get the string `'Sir Gallant'`, which is output by `p`.
+
+Next, we call the `#speak` instance method on the `Knight` instance referenced by `sir_gallant`. There is no `#speak` method defined in the `Knight` class, but there is one defined in `Character` that is inherited. Within this method, the `@name` instance variable (which points to `'Gallant'`) is accessed directly and interpolated into the string `"Gallant is speaking"`, which is returned and passed to `p` for output.
+
+Because we have a special formatting we want for the value referenced by `@name` in our `Knight` objects, we should rely on accessing the value referenced by `@name` via our getter method `Knight#name`. Within our `Character#speak` method, we can simply call the `name` getter method within the string interpolation instead of referencing the instance variable directly. For instances of the class `Character` this will return the value referenced by `@name` and for instances of the class `Knight` this will return the value referenced by `@name` prepended by `'Sir '` which is what we want.
+
+```ruby
+def speak
+  "#{name} is speaking."
+end
+
+sir_gallant = Knight.new("Gallant")
+spongebob = Character.new("Spongebob")
+
+p sir_gallant.speak         # => Sir Gallant is speaking
+p spongebob.speak           # => Spongebob is speaking
+```
 
 ---
 
@@ -351,6 +379,37 @@ p Cow.new.speak
 
 _What is output and why?_
 
+Here we have four class definitions. The superclass `FarmAnimal` from which the subclasses `Sheep` and `Cow` both inherit. `Sheep` is also superclass to the `Lamb` class which inherits all methods from `Sheep` and `FarmAnimal` as well. Then we instantiate three objects, one of the class `Sheep`, one of the class `Lamb`, and one of the class `Cow`, and call the `#speak` instance method on each.
+
+When we call the `#speak` instance method on `Sheep` Ruby executes the `Sheep#speak` instance method as this is the first class searched in the method lookup chain. the `Sheep#speak` instance method invokes `super`, which looks up the inheritance chain (in this case to the `FarmAnimal` class) and executes the method of the same name that it finds (in this case `FarmAnimal#speak`). Within the `FarmAnimal#speak` method we use string interpolation to access the calling object as a string representation and add it to the string `" says"`. Because we have no class specific `to_s` defined, this will execute the default implementation from the class `Object`, which returns ``#<Sheep:0x000055648c2910d0>` Then,  within the `Sheep#speak` method this string is concatenated with the string `"baa!"` which is returned by the call to `Sheep#speak` and passed to `p` for output. The full output will be the string `"#<Sheep:0x000055648c2910d0> says baa!"`.
+
+Next we invoke the `#speak` method on the `Lamb` object. This executes the code within the `#speak` method defined in the class `Lamb`. This also has a call to `super`, which will execute the `Sheep#speak` method explained in the above paragraph. This time, however, the object referenced by `self` in the `FarmAnimal#speak` method will be an instance of `Lamb`, so the string representation becomes `'#<Lamb:0x000055648c290ef0>"`. The full output will be `"#<Lamb:0x000055648c290ef0> says baa!baaaaaaa!"`.
+
+Finally, we invoke the `speak` method on the instance of `Cow`. This executes the `Cow#speak` method which also has a call to `super`, executing the `FarmAnimal#speak` method once again, and concatenating the result with `"mooooooo!"`. Again, `self` will reference the calling object, the instance of `Cow` and a string representation of that object (`#<Cow:0x000055648c290ce8>`) is interpolated into the return value string. The full output becomes `"#<Cow:0x000055648c290ce8> says mooooooo!"`.
+
+To have a friendlier representation of each object as a string, we might consider defining a `to_s` method in the `FarmAnimal` superclass. This will override the default behavior of `to_s` as defined in object and allow us to tell Ruby how we want these objects represented as a string. Because all the subclasses inherit in some way from the `FarmAnimal` superclass, we only have to write this method once:
+
+```ruby
+
+class FarmAnimal
+  def speak
+    "#{self} says "
+  end
+
+  def to_s
+    self.class.to_s
+  end
+end
+```
+
+Now the output becomes:
+
+```ruby
+p Sheep.new.speak         # => "Sheep says baa!"
+p Lamb.new.speak          # => "Lamb says baa!baaaaaaa!"
+p Cow.new.speak           # => "Cow says mooooooo!"
+```
+
 ---
 
 8
@@ -375,6 +434,10 @@ fluffy = Cat.new("Fluffy", sara)
 
 _What are the collaborator objects in the above code snippet, and what makes them collaborator objects?_
 
+In the code above, we define the class `Person` and the class `Cat`. We then instantiate a new `Person` object, passsing the string object `"Sara"` as an argument and assigning it to the instance variable `@name` according to the `Person#initialize` constructor method. The `Person` object is then assigned to the local variable `sara`. The string object `"Sara"` is considered to be a collaborator object, as we are assigning it to be a part of the _state_ of the `Person` object referenced by `sara`.
+
+We then initialize a `Cat` object and pass it the string `"Fluffy"` and the `Person` object referenced by `sara` as arguments. The string `"Fluffy"` is assigned to the `@name` instance variable and the `Person` object `sara` is assigned to the `@owner` instance variable. This is executed according to the `Cat#initialize` constructor method, which is invoked upon initialization by the class method `::new`. Both the string `"Fluffy"` and the `Person` instance referenced by `sara` are considered to be collaborator objects, because they are both values assigned to instance variables within the `Cat` object referenced by `fluffy`.
+
 ---
 
 9
@@ -390,6 +453,8 @@ end
 ```
 
 _What methods does this `case` statement use to determine which `when` clause is executed?_
+
+In Ruby, a case statement implicity uses the `===` method to compare objects after `when` with the object in the `case` statement. This `===` method is often defined for the built in object type. For example, in the code snippet above, the `case` statement will use `Integer#===` for the first two `when` clauses and `Range#===` for the final `when` clause. When `#===` is called with an object that represents a collection, it is often implemented such that it's asking, "is the object passed as argument included in the collection that called the method?". This polymorphism is what allows us to use both integers and ranges in a single case statement. While the `===` method will check for equality in the first two `when` clauses, in the third it will simple see if the value referenced by `number` (in this case, the integer `42`) is included in the range `40..49`. Here, this will return `true`, so the code following `then` executes and the case statement returns the string `'third'`.
 
 ---
 
@@ -412,6 +477,56 @@ end
 ```
 
 _What are the scopes of each of the different variables in the above code?_
+
+Within the class `Person` we have the constant `TITLES`. Constants, when initialized within class definitions exhibit lexical scope. This means that they can be accessed from both instance and class methods within the class in which they are initialized. However, if we want to access them from elsewhere (such as in a different class or within the main scope of the program) we need to append the class name to which they belong using the namespace resolution operator.
+
+```ruby
+class ContactCard
+  def initialize(person, address, phone_number)
+    @person = peron # we pass a Person collaborator object here
+    @address = address
+    @phone_number = phone_number
+  end
+
+  def show_info
+    puts "#{Person::TITLES.sample} #{person}" # access the TITLES constant in a different class
+    # etc...
+  end
+
+  private
+
+  attr_reader :person, :address, :phone_number
+end
+```
+
+Within the class `Person` we also have the class variable `@@total_people` defined. This is scoped on the class level, meaning it is available within all instance and class methods defined for that particular class. Important to not is that all instances of a class share a _single_ copy of an instance variable. So modifying it through one object will affect it no matter where it is referenced.
+
+```ruby
+class Person
+  TITLES = ['Mr', 'Mrs', 'Ms', 'Dr']
+
+  @@total_people = 0
+
+  def initialize(name)
+    @name = name
+    @@total_people += 1
+  end
+
+  def age
+    @age
+  end
+
+  def self.total
+    @@total_people
+  end
+end
+
+Person.total                # => 0
+joe = Person.new('Joe')
+Person.total                # => 1
+```
+
+Within the class `Person`, we also have the instance variables `@name` and `@age`. Instance variables are scoped at the object level, meaning they must be accessed through the specific instance of the class to which they pertain. They are available throughout the instance methods defined within the class (because these are scoped on the object level), but otherwise we must have specifically defined _setter and getter_ methods in order to access them through the object. The `Person#age` method is an example of one such getter method for the instance variable `@age`.
 
 ---
 
