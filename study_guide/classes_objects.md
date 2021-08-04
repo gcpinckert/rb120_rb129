@@ -38,8 +38,8 @@ thing.what_am_i                         # => "I am an object"
 
 Objects are created from **classes** (which are also another type of Object).
 
-**Class** = a mold
-**Object** = something created from that mold
+**Class** = a blueprint
+**Object** = something built from that blueprint
 
 Individual objects can contain different information, but can still be instances of the same class.
 

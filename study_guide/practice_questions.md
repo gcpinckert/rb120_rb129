@@ -8,6 +8,8 @@
 [Inheritance](#inheritance)
 [Modules](#modules)
 [Method Lookup Path](#method-lookup-path)
+[Constants](#constants)
+[Getters and Setters](#getters-and-setters)
 
 ## OOP
 
@@ -685,7 +687,49 @@ In Ruby, the `Object` class is the root class from which all other objects inher
 However, there are certain cases where it is both desireable and appropriate to override methods defined in the `Object`
 class. This is most commonly done with the `Object#to_s` method, which we can define to create a different string representation of a custom defined object when passed to `puts` or used with string interpolation (both of which call `to_s` implicitly).
 
-Another occasion where we might want to override methods from `Object` is when dealing with methods of equivlance like `==` and comparison like `<=>`. Overriding these methods allows us to tell Ruby _which_ values that are encapsulated within the object we would like to compare, rather than simply asking if it is the same object in memory as another.
+Another occasion where we might want to override methods from `Object` is when dealing with methods of equivalence like `==` and comparison like `<=>`. Overriding these methods allows us to tell Ruby _which_ values that are encapsulated within the object we would like to compare, rather than simply asking if it is the same object in memory as another.
+
+__Are class variables accessible to subclasses?__
+
+Class variables are inherited by subclasses. However, it is important to note that all instances of a class _and_ its subclasses share the same copy of the class variable. That means if we access the class variable through one of the subclasses and make any changes to it, this will be reflected when we try to access it through the superclass too.
+
+```ruby
+class Shape
+  @@sides = nil
+
+  def self.sides
+    @@sides
+  end
+end
+
+class Triangle < Shape
+  def initialize
+    @@sides = 3
+  end
+end
+
+class Square < Shape
+  def initialize
+    @@sides = 4
+  end
+end
+
+p Shape.sides     # => nil
+p Triangle.sides  # => nil
+p Square.sides    # => nil
+
+Triangle.new      # sets @@sides to 3
+
+p Shape.sides     # => 3
+p Triangle.sides  # => 3
+p Square.sides    # => 3
+
+Square.new        # sets @@sides to 4
+
+p Shape.sides     # => 4
+p Triangle.sides  # => 4
+p Square.sides    # => 4
+```
 
 ## Modules
 
@@ -811,3 +855,44 @@ Person.ancestors # => [Person, Swimmable, Walkable, Animal, Object, Kernel, Basi
 In the above code, we call the `::ancestors` class method on our defined classes to get an array representing the method lookup path for each. Based on this, we can see that Ruby will first check the closest class to the class or object that invokes the method.
 
 Next, it will check any modules that are included in that class. If more than one module is included, it will check the _last_ included module first. Next, it will check the superclass, then any modules included in the superclass, which are also inherited by the subclass. It will keep moving up along the chain in this order until it reaches `BasicObject` which is the last superclass for all objects in Ruby.
+
+## Constants
+
+__How can we reference a constant initialized within a different class?__
+
+We can access constants referenced within a different class by appending the namespace resolution operator (`::`) to the class name before attempting to reference the constant: `ClassName::CONSTANT`.
+
+__How are constants used in inheritance?__
+
+A constant initialized in a superclass is inherited by the subclass. However, because constants have lexical scope, Ruby will first search the class in which they are referenced, before looking at the inheritance hierarchy. Therefore whenever we reference a constant outside of the class in which it is initialized we should use the syntax where we access it through it's class or module name.
+
+## Getters and Setters
+
+__What is a getter method?__
+
+A getter method is a specifically defined method that returns the value referenced by any given instance variable within an object. We need getter methods to be able to access this value outside of the class. They are generally defined with the same name as the instance variable (i.e. `@name` would have getter method `#name`).
+
+We can either manually define our getter methods like so:
+
+```ruby
+def name
+  @name
+end
+```
+
+Or we can use the `attr_*` shorthand provided by Ruby. Both `attr_reader :name` and `attr_accessor :name` provide us with a getter method here.
+
+__What is a setter method?__
+
+A setter method is a specifically defined method that we use to initialize or reassign an instance variable from outside the class or object. Setter methods are usually named with the `=` after the method name. This not only differentiates them from getter methods, but allows us to utilize Ruby's syntactical sugar when invoking them.
+
+```ruby
+# defined inside the class
+def name=(new_name)
+  @name = new_name
+end
+
+# call the setter method with syntactical sugar
+joe = Person.new('Joe')
+joe.name = 'Bob'
+```
