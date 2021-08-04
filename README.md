@@ -62,9 +62,10 @@
     - [Right and Left Shift](./study_guide/fake_operators_equality.md#right-and-left-shift)
     - [Plus](./study_guide/fake_operators_equality.md#the-plus-method)
     - [Element Setters and Getters](./study_guide/fake_operators_equality.md#element-setters-and-getters)
-- [Collaborator Objects](./study_guide/collaborator_objects.md)
+- [Collaborator Objects](./study_guide/collaborator_objs.md)
   - [Example 1: Library and Book](./study_guide/collaborator_objects.md#example-1)
   - [Example 2: Deck and Card](./study_guide/collaborator_objects.md#example-2)
+- [Open Ended Practice Questions](./study_guide/practice_questions.md)
 
 ## Lessons & Assignments
 
@@ -196,6 +197,7 @@
 - [Practice Test 1](./study_guide/practice_test1.md)
 - [Practice Test 2](./study_guide/practice_test2.md)
 - [Shorter Practice Test](./study_guide/practice_test_short.md)
+- [Practice Questions](./study_guide/practice_questions.md)
 
 ## To-Do
 

@@ -126,6 +126,8 @@ felix.swim          # => NoMethodError
 
 **Duck typing** occurs when different unrelated types of objects both respond to the same method name. Here, we want to see that an object has a _particular behavior_ rather than if it is a certain class/type. Polymorphism through duck typing means that different types of objects can have different methods of various implementations, all with the same interface (name + arguments), despite not inheriting these methods.
 
+We can tell when duck typing is in play because it deals with a number of objects that share a common interface, even though they have no relationship via class or module. Duck typing focuses on what an object can _do_ rather than what an object _is_.
+
 Think of a webpage, which has an assortment of unrelated clickable elements. A link, a button, a checkbox, an image, or a text input field. All these things might have a method that defines the various implementation for each when clicked by the mouse. However, they are not formally _types_ together as they might be through class inheritance. They simply all exhibit the same behavior.
 
 Example 1 (from LS material):

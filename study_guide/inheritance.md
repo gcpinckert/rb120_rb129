@@ -71,7 +71,7 @@ In the code above, we define the `Dog` superclass with the instance method `#spe
 
 **Interface inheritance** describes the inheritance that occurs when we include a _mixin module_ with a specific class. This class inherits any behaviors defined in a super class, but _also_ inherits the interface provided by the _mixin module_. This does not result in a specialized type, but how the class can access the methods defined within the module can still be thought of as inheritance.
 
-For more information, see [modules](link-goes-here).
+For more information, see [modules](./modules.md).
 
 ## Method Lookup Path
 
