@@ -204,9 +204,9 @@
 
 - [x] Generate practice tests
 - [x] Take practice tests
-- [ ] Review all OO exercises
-  - [ ] Special focus on [Medium 1](./exercises/medium_1)
-  - [ ] Special focus on [Debugging](./exercises/debugging)
+- [x] Review all OO exercises
+  - [x] Special focus on [Medium 1](./exercises/medium_1)
+  - [x] Special focus on [Debugging](./exercises/debugging)
 - [x] Create study guide with focus on the following topics:
   - [x] Classes and Objects
   - [x] Use `attr_*` to create setter and getter methods
@@ -226,4 +226,4 @@
   - [x] Working with collaborator objects
 - [x] Review all Quiz Questions
 - [x] [RB129 Assesment Practice Problems](https://docs.google.com/document/d/10JvX-ArkfF8fIWQu8wPaYt7JJHrv_5E0gM0I2uPirwI/edit#)
-- [ ] [OOP Questions (organized)](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
+- [x] [OOP Questions (organized)](https://docs.google.com/document/d/10Lg5TfMMqtADcHlPKiDUBqPDMB6Q63_Fs_uVGQG3ybQ/edit)
