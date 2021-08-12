@@ -7,6 +7,8 @@
 - [Player Characters](#player-characters)
 - [Dictionary](#dictionary)
 - [Library](#library)
+- [Constants](#constants)
+- [Juniors](#juniors)
 
 ## Compare FishAliens
 
@@ -645,4 +647,213 @@ lib.books.each { |book| puts book }
 
 lib.checkout_book('The Odyssey', 'Homer')
   # => The library does not have that book
+```
+
+## Constants
+
+Problem:
+
+```ruby
+LOCATION = self
+
+class Parent
+  LOCATION = self
+end
+
+module A
+  module B
+    LOCATION = self
+    module C
+      class Child < Parent
+        LOCATION = self
+        def where_is_the_constant
+          LOCATION
+        end
+      end
+    end
+  end
+end
+
+instance = A::B::C::Child.new
+puts instance.where_is_the_constant
+
+# What does the last line of code output?
+# Comment out LOCATION in Child, what is output now?
+# Comment out LOCATION in Module B, what is output now?
+# Comment out LOCATION in Parent, what is output now?
+```
+
+```ruby
+LOCATION = self # main
+
+class Parent
+  LOCATION = self # Parent
+end
+
+module A
+  module B
+    LOCATION = self # module B
+    module C
+      class Child < Parent
+        LOCATION = self # Child
+        def where_is_the_constant
+          LOCATION # Child
+        end
+      end
+    end
+  end
+end
+
+instance = A::B::C::Child.new
+puts instance.where_is_the_constant
+
+# What does line 40 output?
+
+# Lexical (excluding main scope) -> Inheritance -> Main scope
+```
+
+## Juniors
+
+```ruby
+# Implement the given classes so that we get the expected results
+
+class ClassLevel
+  attr_accessor :level, :members
+
+  def initialize(level)
+    @level = level
+    @members = []
+  end
+end
+
+class Student
+  attr_acessor :name, :id, :gpa
+  
+  def initialize(name, id, gpa)
+    @name = name
+    @is = id
+    @gpa = gpa
+  end
+end
+
+juniors = ClassLevel.new('Juniors')
+
+anna_a = Student.new('Anna', '123-11-123', 3.85)
+bob = Student.new('Bob', '555-44-555', 3.23)
+chris = Student.new('Chris', '321-99-321', 2.98)
+david = Student.new('David', '987-00-987', 3.12)
+anna_b = Student.new('Anna', '543-33-543', 3.76)
+
+juniors << anna_a
+juniors << bob
+juniors << chris
+juniors << david
+juniors << anna_b
+
+juniors << anna_a
+  # => "That student is already added"
+
+puts juniors.members
+  # => ===========
+  # => Name: Anna
+  # => Id: XXX-XX-123
+  # => GPA: 3.85
+  # => ==========
+  # => ...etc (for each student)
+
+p anna_a == anna_b 
+  # => false
+
+p david > chris
+  # => true
+
+juniors.valedictorian
+  # => "Anna has the highest GPA of 3.85"
+```
+
+```ruby
+class ClassLevel
+  attr_reader :level, :members
+
+  def initialize(level)
+    @level = level
+    @members = []
+  end
+  
+  def <<(student)
+    if members.include?(student)
+      puts "That student is already added"
+    else
+      members << student
+    end    
+  end
+  
+  def print_members
+    members.each do |member|
+      puts "=========="
+      puts member
+    end
+  end
+  
+  def valedictorian
+    student = members.max_by(&:gpa)
+    puts "#{student.name} has the highest GPA of #{student.gpa}"  
+  end
+end
+
+class Student
+  attr_accessor :name, :gpa, :id
+  
+  def initialize(name, id, gpa)
+    @name = name
+    @id = id
+    @gpa = gpa
+  end
+    
+  def to_s
+    "Name: #{name}\nId: XXX-XX-#{id[-3, 3]}\nGPA: #{gpa}"
+  end
+  
+  def ==(other_student)
+    id == other_student.id
+  end
+  
+  def >(other_student)
+    gpa > other_student.gpa
+  end
+end
+
+juniors = ClassLevel.new('Juniors')
+
+anna_a = Student.new('Anna', '123-11-123', 3.85)
+bob = Student.new('Bob', '555-44-555', 3.23)
+chris = Student.new('Chris', '321-99-321', 2.98)
+david = Student.new('David', '987-00-987', 3.12)
+anna_b = Student.new('Anna', '543-33-543', 3.76)
+
+juniors << anna_a
+juniors << bob
+juniors << chris
+juniors << david
+juniors << anna_b
+
+juniors << anna_a
+#   # => "That student is already added"
+
+puts juniors.members
+#   # => ==========
+#   # => Name: Anna
+#   # => Id: XXX-XX-123
+#   # => GPA: 3.85
+#   # => ==========
+#   # => ...etc (for each student)
+
+p anna_a == anna_b 
+#   # => false
+
+p david > chris
+#   # => true
+
+juniors.valedictorian
+#   # => "Anna has the highest GPA of 3.85"
 ```
