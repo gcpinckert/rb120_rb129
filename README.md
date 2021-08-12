@@ -193,6 +193,7 @@
 - [July 22 SPOT](./study_guide/sppot_session_7_22.md)
 - [August 3 Alonso](./study_guide/study_session_8_3.md)
 - [August 11 James Luke Michael](./study_guide/study_session_8_11.md)
+- **Practice Problems** [August 12 James Like Michael](./study_guide/study_session_8_12.md)
 
 ## Practice Tests
 
