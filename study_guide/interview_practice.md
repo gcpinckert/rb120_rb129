@@ -1,15 +1,15 @@
 # Interview Practice Questions
 
-1. What is encapsulation in Ruby, and why does it matter? Demonstrate with code.
-2. What is polymorphism in Ruby? How do we implement it in code?
-3. How do we control access to methods in Ruby?
+1. What is encapsulation in Ruby, and why does it matter? Demonstrate with code. [Example Answer](./example_code/encapsulation1.rb)
+2. What is polymorphism in Ruby? How do we implement it in code? [Example Answer](./example_code/polymorphism.rb)
+3. How do we control access to methods in Ruby? [Example Answer](./example_code/method_access_control.rb)
 4. How does inheritance work in Ruby? When would inheritance be appropriate?
 5. What are getter and setter methods in Ruby? How do we create them?
 6. What is the difference between instance methods and class methods?
 7. What is `self`? Demonstrate how it is used.
 8. What are modules? When is it appropriate to use them?
 9. What is the `attr_accessor` method, and why wouldn’t we want to just add `attr_accessor` methods for every instance variable in our class? Give an example.
-10. How is Method Access Control implemented in Ruby? Provide examples of when we would use public, protected, and private access modifiers.
+10. How is Method Access Control implemented in Ruby? Provide examples of when we would use public, protected, and private access modifiers. [Example Answer](./example_code/method_access_control.rb)
 11. Why is it generally safer to invoke a setter method (if available) vs. referencing the instance variable directly when trying to set an instance variable within the class? Give an example.
 12. Give an example of when it would make sense to manually write a custom getter method vs. using `attr_reader`.
 13. What is the difference between states and behaviors?
