@@ -3,9 +3,9 @@
 1. What is encapsulation in Ruby, and why does it matter? Demonstrate with code. [Example Answer](./example_code/encapsulation1.rb)
 2. What is polymorphism in Ruby? How do we implement it in code? [Example Answer](./example_code/polymorphism.rb)
 3. How do we control access to methods in Ruby? [Example Answer](./example_code/method_access_control.rb)
-4. How does inheritance work in Ruby? When would inheritance be appropriate?
-5. What are getter and setter methods in Ruby? How do we create them?
-6. What is the difference between instance methods and class methods?
+4. How does inheritance work in Ruby? When would inheritance be appropriate? [Example Answer](./example_code/inheritance.rb)
+5. What are getter and setter methods in Ruby? How do we create them? [Example Answer](./example_code/g_s1.rb)
+6. What is the difference between instance methods and class methods? [Example Answer](./example_code/class_instance_methods.rb)
 7. What is `self`? Demonstrate how it is used.
 8. What are modules? When is it appropriate to use them?
 9. What is the `attr_accessor` method, and why wouldn’t we want to just add `attr_accessor` methods for every instance variable in our class? Give an example.
@@ -23,4 +23,4 @@
 21. Describe the distinction between modules and classes.
 22. What is Object Oriented Programming, and why was it created? What are the benefits of OOP, and examples of problems it solves?
 23. What is the relationship between classes and objects in Ruby?
-24. When should we use class inheritance vs. interface inheritance?
+24. When should we use class inheritance vs. interface inheritance? [Example Answer](./example_code/inheritance.rb)
