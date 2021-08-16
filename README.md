@@ -194,6 +194,8 @@
 - [August 3 Alonso](./study_guide/study_session_8_3.md)
 - [August 11 James Luke Michael](./study_guide/study_session_8_11.md)
 - **Practice Problems** [August 12 James Like Michael](./study_guide/study_session_8_12.md)
+- [August 13](./study_guide/study_session_8_113.md)
+- [August 16 James Luke Michael](./study_guide/study_session_8_16.md)
 
 ## Practice Tests
 

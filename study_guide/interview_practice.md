@@ -6,7 +6,7 @@
 4. How does inheritance work in Ruby? When would inheritance be appropriate? [Example Answer](./example_code/inheritance.rb)
 5. What are getter and setter methods in Ruby? How do we create them? [Example Answer](./example_code/g_s1.rb)
 6. What is the difference between instance methods and class methods? [Example Answer](./example_code/class_instance_methods.rb)
-7. What is `self`? Demonstrate how it is used.
+7. What is `self`? Demonstrate how it is used. [Example Answer](./example_code/self.rb)
 8. What are modules? When is it appropriate to use them?
 9. What is the `attr_accessor` method, and why wouldn’t we want to just add `attr_accessor` methods for every instance variable in our class? Give an example.
 10. How is Method Access Control implemented in Ruby? Provide examples of when we would use public, protected, and private access modifiers. [Example Answer](./example_code/method_access_control.rb)
